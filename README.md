@@ -19,7 +19,7 @@ For details about processing genomic data and caclulating pairwise relatedness, 
 Raw GPS data can be downloaded from MoveBank. The GPS data used for this projet and posted to this repository has been filtered to only include valid fixes and those with high horizontal accuracy (HDOP > 5). Raw data also includes a reference fix that was taken prior to deployment. Those reference points have been removed from the data provided here. Scripts and data are in the folder `process-spatial-data`.
 
 
-Use the script `KDE with adehabitatHR` to calculate 50% and 90% kernel density estimator areas, and the proportion of points within 50 and 100m of the home barn. The script takes the following input data: 
+Use the script `KDE with adehabitatHR_git.R` to calculate 50% and 90% kernel density estimator areas, and the proportion of points within 50 and 100m of the home barn. The script takes the following input data: 
 
 * `GPS points all sites.csv` table of GPS points for each female
 * `barns.csv` table of nesting barn locations
