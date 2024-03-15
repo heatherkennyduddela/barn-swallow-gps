@@ -1,0 +1,200 @@
+Year,Band,Site,Sex,Type,FamilyID,Tissue,Seq.ID,Nest,Brood,clutch_id
+2021,2811-83404,Blue Cloud,,kid,BlueCloud-09,blood,CO-83404,21,1,Blue Cloud_21_1
+2021,2811-83405,Blue Cloud,,kid,BlueCloud-09,blood,CO-83405,21,1,Blue Cloud_21_1
+2021,2811-83406,Blue Cloud,,kid,BlueCloud-09,blood,CO-83406,21,1,Blue Cloud_21_1
+2021,2811-83407,Blue Cloud,,kid,BlueCloud-09,blood,CO-83407,21,1,Blue Cloud_21_1
+2021,2811-83408,Blue Cloud,,kid,BlueCloud-09,blood,CO-83408,21,1,Blue Cloud_21_1
+2021,2811-82979,Blue Cloud,,kid,BlueCloud-14,blood,CO-82979,22,1,Blue Cloud_22_2
+2021,2811-82980,Blue Cloud,,kid,BlueCloud-14,blood,CO-82980,22,1,Blue Cloud_22_2
+2021,2811-82981,Blue Cloud,,kid,BlueCloud-14,blood,CO-82981,22,1,Blue Cloud_22_2
+2021,2811-82982,Blue Cloud,,kid,BlueCloud-14,blood,CO-82982,22,1,Blue Cloud_22_2
+2021,2811-82983,Blue Cloud,,kid,BlueCloud-14,blood,CO-82983,22,1,Blue Cloud_22_2
+2021,E29,Blue Cloud,,egg,BlueCloud-09,egg,CO-E29,NA,collected,BlueCloud-09_egg
+2021,E30,Blue Cloud,,egg,BlueCloud-09,egg,CO-E30,NA,collected,BlueCloud-09_egg
+2021,E31,Blue Cloud,,egg,BlueCloud-09,egg,CO-E31,NA,collected,BlueCloud-09_egg
+2021,E32,Blue Cloud,,egg,BlueCloud-09,egg,CO-E32,NA,collected,BlueCloud-09_egg
+2021,E33,Blue Cloud,,egg,BlueCloud-09,egg,CO-E33,NA,collected,BlueCloud-09_egg
+2021,E48,Blue Cloud,,egg,BlueCloud-14,egg,CO-E48,NA,collected,BlueCloud-14_egg
+2021,E49,Blue Cloud,,egg,BlueCloud-14,egg,CO-E49,NA,collected,BlueCloud-14_egg
+2021,E50,Blue Cloud,,egg,BlueCloud-14,egg,CO-E50,NA,collected,BlueCloud-14_egg
+2021,E51,Blue Cloud,,egg,BlueCloud-14,egg,CO-E51,NA,collected,BlueCloud-14_egg
+2021,E34,Cathy's,,egg,Cathys-03,egg,CO-E34,NA,collected,Cathys-03_egg
+2021,E35,Cathy's,,egg,Cathys-03,egg,CO-E35,NA,collected,Cathys-03_egg
+2021,E36,Cathy's,,egg,Cathys-03,egg,CO-E36,NA,collected,Cathys-03_egg
+2021,E37,Cathy's,,egg,Cathys-03,egg,CO-E37,NA,collected,Cathys-03_egg
+2021,2811-82969,Cooks,,kid,Cooks-23,blood,CO-82969,22,1,Cook's_22_1
+2021,2811-82970,Cooks,,kid,Cooks-23,blood,CO-82970,22,1,Cook's_22_1
+2021,2811-82971,Cooks,,kid,Cooks-23,blood,CO-82971,22,1,Cook's_22_1
+2021,2811-82972,Cooks,,kid,Cooks-23,blood,CO-82972,22,1,Cook's_22_1
+2021,2811-82973,Cooks,,kid,Cooks-23,blood,CO-82973,22,1,Cook's_22_1
+2021,2811-83214,Cooks,,kid,Cooks-27,blood,CO-83214,29,2,Cook's_29_2
+2021,2811-83215,Cooks,,kid,Cooks-27,blood,CO-83215,29,2,Cook's_29_2
+2021,2811-83216,Cooks,,kid,Cooks-27,blood,CO-83216,29,2,Cook's_29_2
+2021,2811-83217,Cooks,,kid,Cooks-27,blood,CO-83217,29,2,Cook's_29_2
+2021,2811-83018,Cooks,,kid,Cooks-23,blood,CO-83018,32,2,Cook's_32_2
+2021,2811-83019,Cooks,,kid,Cooks-23,blood,CO-83019,32,2,Cook's_32_2
+2021,2811-83020,Cooks,,kid,Cooks-23,blood,CO-83020,32,2,Cook's_32_2
+2021,2811-83022,Cooks,,kid,Cooks-23,blood,CO-83022,32,2,Cook's_32_2
+2021,2811-83033,Cooks,,kid,Cooks-24,blood,CO-83033,33,2,Cook's_33_2
+2021,2811-83034,Cooks,,kid,Cooks-24,blood,CO-83034,33,2,Cook's_33_2
+2021,2811-83035,Cooks,,kid,Cooks-24,blood,CO-83035,33,2,Cook's_33_2
+2021,2811-83036,Cooks,,kid,Cooks-24,blood,CO-83036,33,2,Cook's_33_2
+2021,2811-39031,Cooks,,kid,Cooks-24,blood,CO-39031,6,1,Cook's_6_1
+2021,2811-39032,Cooks,,kid,Cooks-24,blood,CO-39032,6,1,Cook's_6_1
+2021,2811-39033,Cooks,,kid,Cooks-24,blood,CO-39033,6,1,Cook's_6_1
+2021,2811-39045,Cooks,,kid,Cooks-24,blood,CO-39045,6,1,Cook's_6_1
+2021,E15,Cooks,,egg,Cooks-23,egg,CO-E15,NA,collected,Cooks-23_egg
+2021,E16,Cooks,,egg,Cooks-23,egg,CO-E16,NA,collected,Cooks-23_egg
+2021,E17,Cooks,,egg,Cooks-23,egg,CO-E17,NA,collected,Cooks-23_egg
+2021,E18,Cooks,,egg,Cooks-23,egg,CO-E18,NA,collected,Cooks-23_egg
+2021,E19,Cooks,,egg,Cooks-23,egg,CO-E19,NA,collected,Cooks-23_egg
+2021,E75,Cooks,,egg,Cooks-24,egg,CO-E75,NA,collected,Cooks-24_egg
+2021,E76,Cooks,,egg,Cooks-24,egg,CO-E76,NA,collected,Cooks-24_egg
+2021,E77,Cooks,,egg,Cooks-24,egg,CO-E77,NA,collected,Cooks-24_egg
+2021,E78,Cooks,,egg,Cooks-24,egg,CO-E78,NA,collected,Cooks-24_egg
+2021,E79,Cooks,,egg,Cooks-24,egg,CO-E79,NA,collected,Cooks-24_egg
+2021,E52,Cooks,,egg,Cooks-27,egg,CO-E52,NA,collected,Cooks-27_egg
+2021,E53,Cooks,,egg,Cooks-27,egg,CO-E53,NA,collected,Cooks-27_egg
+2021,E54,Cooks,,egg,Cooks-27,egg,CO-E54,NA,collected,Cooks-27_egg
+2021,E55,Cooks,,egg,Cooks-27,egg,CO-E55,NA,collected,Cooks-27_egg
+2021,E60,Cooks,,egg,Cooks-31,egg,CO-E60,NA,collected,Cooks-31_egg
+2021,E61,Cooks,,egg,Cooks-31,egg,CO-E61,NA,collected,Cooks-31_egg
+2021,E63,Cooks,,egg,Cooks-31,egg,CO-E63,NA,collected,Cooks-31_egg
+2021,E64,Cooks,,egg,Cooks-31,egg,CO-E64,NA,collected,Cooks-31_egg
+2021,2811-82977,Hepp (near Cook),,kid,Cooks-31,blood,CO-82977,1,1,Hepp (near Cook)_1_1
+2021,2811-82978,Hepp (near Cook),,kid,Cooks-31,blood,CO-82978,1,1,Hepp (near Cook)_1_1
+2021,2811-83401,Make Believe,,kid,MakeBelieve-69,blood,CO-83401,14,1,Make Believe_14_1
+2021,2811-83402,Make Believe,,kid,MakeBelieve-69,blood,CO-83402,14,1,Make Believe_14_1
+2021,2811-83403,Make Believe,,kid,MakeBelieve-69,blood,CO-83403,14,1,Make Believe_14_1
+2021,2811-83205,Make Believe,,kid,MakeBelieve-26,blood,CO-83205,34,1,Make Believe_34_1
+2021,2811-83206,Make Believe,,kid,MakeBelieve-26,blood,CO-83206,34,1,Make Believe_34_1
+2021,2811-83207,Make Believe,,kid,MakeBelieve-26,blood,CO-83207,34,1,Make Believe_34_1
+2021,2811-83208,Make Believe,,kid,MakeBelieve-26,blood,CO-83208,34,1,Make Believe_34_1
+2021,2811-83209,Make Believe,,kid,MakeBelieve-26,blood,CO-83209,34,1,Make Believe_34_1
+2021,2881-34129,Make Believe,,kid,MakeBelieve-26,blood,CO-34129,38,2,Make Believe_38_2
+2021,2881-34130,Make Believe,,kid,MakeBelieve-26,blood,CO-34130,38,2,Make Believe_38_2
+2021,2881-34131,Make Believe,,kid,MakeBelieve-26,blood,CO-34131,38,2,Make Believe_38_2
+2021,2811-82963,Make Believe,,kid,MakeBelieve-20,blood,CO-82963,70,1,Make Believe_70_1
+2021,2811-82964,Make Believe,,kid,MakeBelieve-20,blood,CO-82964,70,1,Make Believe_70_1
+2021,2811-82965,Make Believe,,kid,MakeBelieve-20,blood,CO-82965,70,1,Make Believe_70_1
+2021,2811-82966,Make Believe,,kid,MakeBelieve-20,blood,CO-82966,70,1,Make Believe_70_1
+2021,2811-82967,Make Believe,,kid,MakeBelieve-20,blood,CO-82967,70,1,Make Believe_70_1
+2021,2811-83041,Make Believe,,kid,MakeBelieve-20,blood,CO-83041,73,2,Make Believe_73_2
+2021,2811-83042,Make Believe,,kid,MakeBelieve-20,blood,CO-83042,73,2,Make Believe_73_2
+2021,2811-83043,Make Believe,,kid,MakeBelieve-20,blood,CO-83043,73,2,Make Believe_73_2
+2021,E05,Make Believe,,egg,MakeBelieve-26,egg,CO-E05,NA,collected,MakeBelieve-26_egg
+2021,E06,Make Believe,,egg,MakeBelieve-26,egg,CO-E06,NA,collected,MakeBelieve-26_egg
+2021,E07,Make Believe,,egg,MakeBelieve-26,egg,CO-E07,NA,collected,MakeBelieve-26_egg
+2021,E08,Make Believe,,egg,MakeBelieve-26,egg,CO-E08,NA,collected,MakeBelieve-26_egg
+2021,E09,Make Believe,,egg,MakeBelieve-26,egg,CO-E09,NA,collected,MakeBelieve-26_egg
+2021,E20,Make Believe,,egg,MakeBelieve-69,egg,CO-E20,NA,collected,MakeBelieve-69_egg
+2021,E21,Make Believe,,egg,MakeBelieve-69,egg,CO-E21,NA,collected,MakeBelieve-69_egg
+2021,E22,Make Believe,,egg,MakeBelieve-69,egg,CO-E22,NA,collected,MakeBelieve-69_egg
+2021,E23,Make Believe,,egg,MakeBelieve-69,egg,CO-E23,NA,collected,MakeBelieve-69_egg
+2021,E24,Make Believe,,egg,MakeBelieve-69,egg,CO-E24,NA,collected,MakeBelieve-69_egg
+2021,2811-82984,Cathy's,,kid,Cathys-03,blood,CO-82984,1,1,Mary Ann's_1_2
+2021,2811-82985,Cathy's,,kid,Cathys-03,blood,CO-82985,1,1,Mary Ann's_1_2
+2021,2811-82986,Cathy's,,kid,Cathys-03,blood,CO-82986,1,1,Mary Ann's_1_2
+2021,2811-82987,Cathy's,,kid,Cathys-03,blood,CO-82987,1,1,Mary Ann's_1_2
+2021,2850-57612,Blue Cloud,F,mom,BlueCloud-09,blood,CO-57612,NA,NA,NA
+2021,2850-57901,Blue Cloud,M,dad,BlueCloud-09,blood,CO-57901,NA,NA,NA
+2021,2850-57610,Blue Cloud,F,mom,BlueCloud-14,blood,CO-57610,NA,NA,NA
+2021,2850-57614,Blue Cloud,M,dad,BlueCloud-14,blood,CO-57614,NA,NA,NA
+2021,2640-97548,Blue Cloud,M,dad,BlueCloud-18,blood,CO-97548,NA,NA,NA
+2021,2850-57565,Blue Cloud,M,dad,BlueCloud-19,blood,CO-57565,NA,NA,NA
+2021,2850-57599,Cathy's,M,dad,Cathys-02,blood,CO-57599,NA,NA,NA
+2021,2850-57549,Cathy's,M,dad,Cathys-03,blood,CO-57549,NA,NA,NA
+2021,2850-57550,Cathy's,F,mom,Cathys-03,blood,CO-57550,NA,NA,NA
+2021,2850-57602,Cooks,M,dad,Cooks-18,blood,CO-57602,NA,NA,NA
+2021,2640-97370,Cooks,F,mom,Cooks-23,blood,CO-97370,NA,NA,NA
+2021,2850-57505,Cooks,M,dad,Cooks-23,blood,CO-57505,NA,NA,NA
+2021,2850-57557,Cooks,M,dad,Cooks-24,blood,CO-57557,NA,NA,NA
+2021,2850-57609,Cooks,F,mom,Cooks-24,blood,CO-57609,NA,NA,NA
+2021,2850-57853,Cooks,F,mom,Cooks-27,blood,CO-57853,NA,NA,NA
+2021,2850-57912,Cooks,M,dad,Cooks-27,blood,CO-57912,NA,NA,NA
+2021,2850-57558,Cooks,F,mom,Cooks-31,blood,CO-57558,NA,NA,NA
+2021,2850-57633,Cooks,M,dad,Cooks-31,blood,CO-57633,NA,NA,NA
+2021,2850-57620,Jim's,M,dad,Jims-01,blood,CO-57620,NA,NA,NA
+2021,2510-63488,Make Believe,M,dad,MakeBelieve-17,blood,CO-63488,NA,NA,NA
+2021,2350-21085,Make Believe,M,dad,MakeBelieve-20,blood,CO-21085,NA,NA,NA
+2021,2640-97596,Make Believe,F,mom,MakeBelieve-20,blood,CO-97596,NA,NA,NA
+2021,2640-97347,Make Believe,F,mom,MakeBelieve-26,blood,CO-97347,NA,NA,NA
+2021,2850-57836,Make Believe,M,dad,MakeBelieve-26,blood,CO-57836,NA,NA,NA
+2021,2811-82916,Make Believe,M,dad,MakeBelieve-61,blood,CO-82916,NA,NA,NA
+2021,2640-97385,Make Believe,F,mom,MakeBelieve-69,blood,CO-97385,NA,NA,NA
+2021,2850-57518,Make Believe,M,dad,MakeBelieve-69,blood,CO-57518,NA,NA,NA
+2021,2850-57625,Alisha's,M,dad,none,blood,CO-57625,NA,NA,NA
+2021,2850-57628,Alisha's,M,dad,none,blood,CO-57628,NA,NA,NA
+2021,2850-57630,Alisha's,M,dad,none,blood,CO-57630,NA,NA,NA
+2021,2850-57631,Alisha's,M,dad,none,blood,CO-57631,NA,NA,NA
+2021,2850-57636,Blue Cloud,M,dad,none,blood,CO-57636,NA,NA,NA
+2021,2850-57915,Alisha's,M,dad,none,blood,CO-57915,NA,NA,NA
+2021,2850-57916,Alisha's,M,dad,none,blood,CO-57916,NA,NA,NA
+2021,2850-57917,Alisha's,M,dad,none,blood,CO-57917,NA,NA,NA
+2021,2850-57555,Reinarz,F,mom,Reinarz-01,blood,CO-57555,NA,NA,NA
+2021,2850-57619,Reinarz,M,dad,Reinarz-01,blood,CO-57619,NA,NA,NA
+2021,2850-57553,Schaaps,F,mom,Schaaps-108,blood,CO-57553,NA,NA,NA
+2021,2850-57607,Schaaps,M,dad,Schaaps-108,blood,CO-57607,NA,NA,NA
+2021,2850-57701,Schaaps,M,dad,Schaaps-110,blood,CO-57701,NA,NA,NA
+2021,2811-06912,Schaaps,M,dad,Schaaps-54,blood,CO-06912,NA,NA,NA
+2021,2850-57603,Schaaps,F,mom,Schaaps-54,blood,CO-57603,NA,NA,NA
+2021,2850-57538,Schaaps,M,dad,Schaaps-80,blood,CO-57538,NA,NA,NA
+2021,2850-57556,Schaaps,F,mom,Schaaps-80,blood,CO-57556,NA,NA,NA
+2021,2850-57551,Struthers,F,mom,Struthers-20,blood,CO-57551,NA,NA,NA
+2021,2850-57552,Struthers,M,dad,Struthers-20,blood,CO-57552,NA,NA,NA
+2021,2850-57608,Urban Farm Girlz,F,mom,UrbanFarm-02,blood,CO-57608,NA,NA,NA
+2021,2850-57615,Urban Farm Girlz,M,dad,UrbanFarm-02,blood,CO-57615,NA,NA,NA
+2021,2850-57624,Urban Farm Girlz,M,dad,UrbanFarm-04,blood,CO-57624,NA,NA,NA
+2021,E80,Reinarz,,egg,Reinarz-01,egg,CO-E80,NA,collected,Reinarz-01_egg
+2021,E81,Reinarz,,egg,Reinarz-01,egg,CO-E81,NA,collected,Reinarz-01_egg
+2021,E82,Reinarz,,egg,Reinarz-01,egg,CO-E82,NA,collected,Reinarz-01_egg
+2021,E83,Reinarz,,egg,Reinarz-01,egg,CO-E83,NA,collected,Reinarz-01_egg
+2021,E84,Reinarz,,egg,Reinarz-01,egg,CO-E84,NA,collected,Reinarz-01_egg
+2021,2811-82974,Schaaps,,kid,Schaaps-108,blood,CO-82974,32,1,Schaap's_32_1
+2021,2811-82975,Schaaps,,kid,Schaaps-108,blood,CO-82975,32,1,Schaap's_32_1
+2021,2811-82976,Schaaps,,kid,Schaaps-108,blood,CO-82976,32,1,Schaap's_32_1
+2021,2811-82988,Schaaps,,kid,Schaaps-54,blood,CO-82988,33,1,Schaap's_33_2
+2021,2811-82989,Schaaps,,kid,Schaaps-54,blood,CO-82989,33,1,Schaap's_33_2
+2021,2811-82990,Schaaps,,kid,Schaaps-54,blood,CO-82990,33,1,Schaap's_33_2
+2021,2811-39038,Schaaps,,kid,Schaaps-80,blood,CO-39038,59,1,Schaap's_59_1
+2021,2811-39039,Schaaps,,kid,Schaaps-80,blood,CO-39039,59,1,Schaap's_59_1
+2021,2811-39040,Schaaps,,kid,Schaaps-80,blood,CO-39040,59,1,Schaap's_59_1
+2021,2811-39041,Schaaps,,kid,Schaaps-80,blood,CO-39041,59,1,Schaap's_59_1
+2021,2811-83044,Schaaps,,kid,Schaaps-80,blood,CO-83044,80,2,Schaap's_80_2
+2021,2811-83045,Schaaps,,kid,Schaaps-80,blood,CO-83045,80,2,Schaap's_80_2
+2021,2811-83046,Schaaps,,kid,Schaaps-80,blood,CO-83046,80,2,Schaap's_80_2
+2021,2811-83029,Schaaps,,kid,Schaaps-108,blood,CO-83029,97,2,Schaap's_97_2
+2021,2811-83030,Schaaps,,kid,Schaaps-108,blood,CO-83030,97,2,Schaap's_97_2
+2021,2811-83031,Schaaps,,kid,Schaaps-108,blood,CO-83031,97,2,Schaap's_97_2
+2021,2811-83032,Schaaps,,kid,Schaaps-108,blood,CO-83032,97,2,Schaap's_97_2
+2021,E70,Schaaps,,egg,Schaaps-108,egg,CO-E70,NA,collected,Schaaps-108_egg
+2021,E71,Schaaps,,egg,Schaaps-108,egg,CO-E71,NA,collected,Schaaps-108_egg
+2021,E72,Schaaps,,egg,Schaaps-108,egg,CO-E72,NA,collected,Schaaps-108_egg
+2021,E73,Schaaps,,egg,Schaaps-108,egg,CO-E73,NA,collected,Schaaps-108_egg
+2021,E74,Schaaps,,egg,Schaaps-108,egg,CO-E74,NA,collected,Schaaps-108_egg
+2021,E56,Schaaps,,egg,Schaaps-54,egg,CO-E56,NA,collected,Schaaps-54_egg
+2021,E57,Schaaps,,egg,Schaaps-54,egg,CO-E57,NA,collected,Schaaps-54_egg
+2021,E58,Schaaps,,egg,Schaaps-54,egg,CO-E58,NA,collected,Schaaps-54_egg
+2021,E59,Schaaps,,egg,Schaaps-54,egg,CO-E59,NA,collected,Schaaps-54_egg
+2021,E38,Schaaps,,egg,Schaaps-80,egg,CO-E38,NA,collected,Schaaps-80_egg
+2021,E39,Schaaps,,egg,Schaaps-80,egg,CO-E39,NA,collected,Schaaps-80_egg
+2021,E40,Schaaps,,egg,Schaaps-80,egg,CO-E40,NA,collected,Schaaps-80_egg
+2021,E41,Schaaps,,egg,Schaaps-80,egg,CO-E41,NA,collected,Schaaps-80_egg
+2021,E42,Schaaps,,egg,Schaaps-80,egg,CO-E42,NA,collected,Schaaps-80_egg
+2021,2811-83037,Struthers,,kid,Struthers-20,blood,CO-83037,10,2,Struther's_10_2
+2021,2811-83038,Struthers,,kid,Struthers-20,blood,CO-83038,10,2,Struther's_10_2
+2021,2811-83039,Struthers,,kid,Struthers-20,blood,CO-83039,10,2,Struther's_10_2
+2021,2811-83040,Struthers,,kid,Struthers-20,blood,CO-83040,10,2,Struther's_10_2
+2021,2811-83210,Struthers,,kid,Struthers-20,blood,CO-83210,20,1,Struther's_20_1
+2021,2811-83211,Struthers,,kid,Struthers-20,blood,CO-83211,20,1,Struther's_20_1
+2021,2811-83212,Struthers,,kid,Struthers-20,blood,CO-83212,20,1,Struther's_20_1
+2021,2811-83213,Struthers,,kid,Struthers-20,blood,CO-83213,20,1,Struther's_20_1
+2021,E43,Struthers,,egg,Struthers-20,egg,CO-E43,NA,collected,Struthers-20_egg
+2021,E44,Struthers,,egg,Struthers-20,egg,CO-E44,NA,collected,Struthers-20_egg
+2021,E45,Struthers,,egg,Struthers-20,egg,CO-E45,NA,collected,Struthers-20_egg
+2021,E46,Struthers,,egg,Struthers-20,egg,CO-E46,NA,collected,Struthers-20_egg
+2021,E47,Struthers,,egg,Struthers-20,egg,CO-E47,NA,collected,Struthers-20_egg
+2021,E01,Urban Farm Girlz,,egg,UrbanFarm-02,egg,CO-E01,NA,collected,UrbanFarm-02_egg
+2021,E02,Urban Farm Girlz,,egg,UrbanFarm-02,egg,CO-E02,NA,collected,UrbanFarm-02_egg
+2021,E03,Urban Farm Girlz,,egg,UrbanFarm-02,egg,CO-E03,NA,collected,UrbanFarm-02_egg
+2021,E04,Urban Farm Girlz,,egg,UrbanFarm-02,egg,CO-E04,NA,collected,UrbanFarm-02_egg
