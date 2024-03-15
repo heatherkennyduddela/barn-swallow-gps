@@ -7,3 +7,10 @@ The steps described require the following software:
 * R and RStudio
 
 For details about processing genomic data and caclulating pairwise relatedness, see the README file in the [genomic-workflow](#genomic-workflow) folder. 
+
+## Contents
+
+* [Process spatial data from GPS tags](#spatial-data)
+* [Paternity assignment using relatedness]
+* Models and hypothesis testing
+
