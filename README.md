@@ -61,7 +61,7 @@ This script generates the following results reported in the manuscript:
 
 * Figure 2
 * Figures S1 and S3-S7
-* Talbes S3 and S4
+* Tables S3 and S4
 * Table 2 and Tables S6-S8 were build manually using model summary outputs
 
 
