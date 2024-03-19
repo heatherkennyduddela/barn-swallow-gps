@@ -5,12 +5,17 @@
 # Nov 7, 2023
 ################################################################################
 
+# Note: because this script uses a random sampling process, running it and generating
+# a new final "estimated max distance from resampling.csv" file may result in
+# values that differ slightly from the original estimated max distance values used
+# in publication. 
+
 # libraries
 library(tidyverse)
 library(ggplot2)
 
 # Load GPS data
-points <- read.csv("point.distances.hkd.csv")
+points <- read.csv("generated-datatables/point.distances.hkd.csv")
 
 # summarise number of points per bird and day
 summary <- points %>%
@@ -32,7 +37,7 @@ tracking.days <- points %>%
 # combine total points and number of tracking days
 days.tot.points <- left_join(summary2, tracking.days, by="nest")
 
-write.csv(days.tot.points, "total points and number tracking days by birds_v2.csv")
+# write.csv(days.tot.points, "total points and number tracking days by birds_v2.csv")
 
 # smallest number of points is 61, so down sample to 60
 
@@ -94,7 +99,7 @@ for (i in 1:length(summary2$nest)) {
 
 summary2$diff.max.mean <- summary2$max - summary2$mean
 
-write.csv(summary2, "estimated max distance from resampling_v2.csv")
+# write.csv(summary2, "generated-datatables/estimated max distance from resampling.csv")
 
 
                          
