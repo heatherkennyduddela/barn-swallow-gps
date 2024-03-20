@@ -1,0 +1,11 @@
+Variable names and descriptions for the CO-2021.thin10k.GL-relate file
+Each row is a pairwise comparison between two of the individuals in the data set.
+This table is the output of relatedness calculations done using the software lcMLkin. 
+
+Ind1 - sequence ID of individual 1
+Ind2 - sequence ID of individual 2
+k0_hat - estimated kinship coefficent 1
+k1_hat - estimated kinship coefficent 2
+k2_hat - estimated kinship coefficent 3
+pi_hat - estimated relatedness value, equivalent to (k1/2) + k2
+nbSNP - number of SNPs (single nucleotide polymorphisms) used for calculating the k and pi values

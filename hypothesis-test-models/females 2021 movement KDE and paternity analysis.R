@@ -2125,7 +2125,7 @@ effect_plot(propEP.season.prop50m.plumF, pred=B_avg.bright.female, interval=T,
             x.label="Female plumage color (average belly brightness)",
             plot.points=T, int.type="confidence",
             main.title="Predicted effect of female color on \nproportion of extra-pair young in the season \nafter accounting for female movement (N=11)")
-ggsave("geneated-files/FigS6A_modeled effect of female plumage on propEP in whole season N=11_v5.png", h=5, w=6)
+ggsave("generated-files/FigS6A_modeled effect of female plumage on propEP in whole season N=11_v5.png", h=5, w=6)
 ggsave("generated-files/FigS6A_modeled effect of female plumage on propEP in whole season N=11_v5.pdf", h=5, w=6)
 
 
