@@ -2,6 +2,9 @@
 
 This file contains details about the data processing and analysis for relating GPS movement data of female barn swallows to their extra-pair mating outcomes in terms of the proportion of extra-pair young in their clutch, and the number of sires represented in each clutch. 
 
+These results are published in the article title "Female Space Use and Plumage Colour Correlate with Extra-pair Mating in Barn Swallows". 
+Article authors: Heather V. Kenny-Duddela, Drew R. Schield, Kayleigh P. Keller, Rebecca J. Safran
+
 The steps described require the following software: 
 
 * R and RStudio
@@ -10,9 +13,9 @@ For details about processing genomic data and caclulating pairwise relatedness, 
 
 ## Contents
 
-* [Process spatial data from GPS tags](https://github.com/heatherkennyduddela/barn-swallow-gps/tree/main?tab=readme-ov-file#processing-gps-data)
-* [Paternity assignment using relatedness](#paternity-assignment)
-* [Hypothesis testing and models](#models)
+* [Process spatial data from GPS tags](#processing-gps-data)
+* [Paternity assignment using relatedness](#paternity-assignment-using-relatedness)
+* [Hypothesis testing and models](#hypothesis-testing-and-models)
 
 ### Processing GPS Data
 
