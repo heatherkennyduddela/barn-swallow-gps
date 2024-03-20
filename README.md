@@ -10,7 +10,7 @@ For details about processing genomic data and caclulating pairwise relatedness, 
 
 ## Contents
 
-* [Process spatial data from GPS tags](#https://github.com/heatherkennyduddela/barn-swallow-gps/tree/main?tab=readme-ov-file#processing-gps-data)
+* [Process spatial data from GPS tags](https://github.com/heatherkennyduddela/barn-swallow-gps/tree/main?tab=readme-ov-file#processing-gps-data)
 * [Paternity assignment using relatedness](#paternity-assignment)
 * [Hypothesis testing and models](#models)
 
