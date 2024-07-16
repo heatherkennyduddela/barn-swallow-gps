@@ -5,6 +5,9 @@
 
 # first pass at paternity assignment from lcMLkin output
 
+# set working directory
+setwd("~/CU Boulder/BARS fieldwork/2022 Field and Lab/Paternity assignment methods/barn-swallow-gps/paternity-assignment")
+
 # read in lcMLkin output file for 2021 data
 kin <- read.table("input-data/CO-2021.thin10k.GL-recalc.relate", header=T)
 
@@ -326,6 +329,51 @@ cooks.test <- subset(dad.unk.sibs.site, dad.unk.sibs.site$FamilyID_ind1 == "Cook
                        dad.unk.sibs.site$FamilyID_ind2== "Cooks-31")
 
 #-------------------------------------------------------------------------------
+# Calculate number of unknown sires per clutch for collected clutch only
+
+collect <- subset(dad.unk.sibs.fam, dad.unk.sibs.fam$Brood_ind1 == "collected" &
+                    dad.unk.sibs.fam$Brood_ind2 == "collected")
+
+unk.fam.collect <- as.data.frame(unique(c(collect$FamilyID_ind1, collect$FamilyID_ind2)))
+colnames(unk.fam.collect)[1] <- "FamilyID"
+# add column to store number of dads
+unk.fam.collect$num.dads <- NA
+
+for (i in 1:length(unk.fam.collect$FamilyID)) {
+  # subset by family id
+  fam <- subset(collect, collect$FamilyID_ind1 == unk.fam.collect$FamilyID[i] |
+                  collect$FamilyID_ind2 == unk.fam.collect$FamilyID[i])
+  
+  # get relatedness data
+  rel <- fam[,c(1,2,6)]
+  
+  # use reshape to go from a pairwise list to a distance matrix
+  rel.r <- reshape(rel, direction="wide", idvar="Ind2", timevar="Ind1")
+  
+  # remove first column which is just labels
+  rel.r.mat <- as.matrix(rel.r[,-1]) 
+  
+  # give full sibs as 0
+  rel.r.bin <- rel.r.mat
+  rel.r.bin[rel.r.mat >= 0.239] <- 0 # cutoff value from range of relatedness from genetic full sibs in 2022
+  
+  # give half sibs as 1
+  rel.r.bin[rel.r.mat < 0.239] <- 1
+  
+  # calculate row products
+  row.prod <- apply(rel.r.bin, 1, prod, na.rm=T)
+  
+  # sum up an add 1 to get the number of fathers
+  num.dad <- sum(row.prod) + 1
+  
+  # save in storage
+  unk.fam.collect$num.dads[i] <- num.dad
+  
+}
+
+
+
+#-------------------------------------------------------------------------------
 # Calculate number of unknown sires per clutch for replacement clutch only
 
 replace <- subset(dad.unk.sibs.fam, dad.unk.sibs.fam$Brood_ind1 == 1 &
@@ -365,6 +413,49 @@ for (i in 1:length(unk.fam.replace$FamilyID)) {
   
   # save in storage
   unk.fam.replace$num.dads[i] <- num.dad
+  
+}
+
+#-------------------------------------------------------------------------------
+# count number of unk sires in 2nd broods
+
+brood2 <- subset(dad.unk.sibs.fam, dad.unk.sibs.fam$Brood_ind1 == 2 &
+                    dad.unk.sibs.fam$Brood_ind2 ==2)
+
+unk.fam.brood2 <- as.data.frame(unique(c(brood2$FamilyID_ind1, brood2$FamilyID_ind2)))
+colnames(unk.fam.brood2)[1] <- "FamilyID"
+# add column to store number of dads
+unk.fam.brood2$num.dads <- NA
+
+for (i in 1:length(unk.fam.brood2$FamilyID)) {
+  # subset by family id
+  fam <- subset(brood2, brood2$FamilyID_ind1 == unk.fam.brood2$FamilyID[i] |
+                  brood2$FamilyID_ind2 == unk.fam.brood2$FamilyID[i])
+  
+  # get relatedness data
+  rel <- fam[,c(1,2,6)]
+  
+  # use reshape to go from a pairwise list to a distance matrix
+  rel.r <- reshape(rel, direction="wide", idvar="Ind2", timevar="Ind1")
+  
+  # remove first column which is just labels
+  rel.r.mat <- as.matrix(rel.r[,-1]) 
+  
+  # give full sibs as 0
+  rel.r.bin <- rel.r.mat
+  rel.r.bin[rel.r.mat >= 0.239] <- 0 # cutoff value from range of relatedness from genetic full sibs in 2022
+  
+  # give half sibs as 1
+  rel.r.bin[rel.r.mat < 0.239] <- 1
+  
+  # calculate row products
+  row.prod <- apply(rel.r.bin, 1, prod, na.rm=T)
+  
+  # sum up an add 1 to get the number of fathers
+  num.dad <- sum(row.prod) + 1
+  
+  # save in storage
+  unk.fam.brood2$num.dads[i] <- num.dad
   
 }
 
@@ -447,7 +538,7 @@ po.wide.21 <- po.wide.21[,c(1, 29, 2:28)]
 
 
 # save wide file
-write.csv(po.wide.21, file="generated-datatables/kin_2021_parent_offspring_assigned_wide.csv")
+write.csv(po.wide.21, file="output-files/kin_2021_parent_offspring_assigned_wide.csv")
 
 
 # count up number of offspring produced by each genetic family
@@ -475,7 +566,7 @@ shared.fert.list.21$fert_type[which(is.na(shared.fert.list.21$FamilyID_dad))] <-
 
 
 # save shared fertilizations list
-write.csv(shared.fert.list.21, file="generated-datatables/fert_2021_by_genetic_family.csv", row.names=F)
+write.csv(shared.fert.list.21, file="output-files/fert_2021_by_genetic_family.csv", row.names=F)
 
 
 # summarise number and proportion of each offspring type
@@ -557,7 +648,7 @@ shared.fert.clutch2.21 <- shared.fert.clutch.21 %>%
 shared.fert.clutch2.21$Brood_ind1[which(is.na(shared.fert.clutch2.21$Brood_ind1))] <- "collected"
 
 # save fertilization types by clutch ID
-write.csv(shared.fert.clutch2.21, file="generated-datatables/fert_2021_by_clutchID.csv", row.names=F)
+write.csv(shared.fert.clutch2.21, file="output-files/fert_2021_by_clutchID.csv", row.names=F)
 # calculate proportion of within-pair offspring per clutch
 shared.fert.wp.21 <- subset(shared.fert.clutch2.21, shared.fert.clutch2.21$fert_type=="wp")
 shared.fert.wp.21 <- shared.fert.wp.21 %>%
@@ -646,7 +737,7 @@ mates.by.fem.unk$num.mates[which(mates.by.fem.unk$FamilyID_mom == unk.fam$Family
 
 
 # save mates per female table
-write.csv(mates.by.fem.unk, file="generated-datatables/num mates chicks clutches per female 2021.csv", row.names=F)
+write.csv(mates.by.fem.unk, file="output-files/num mates chicks clutches per female 2021.csv", row.names=F)
 
 #-------------------------------------------------------------------------------
 # Now calculate total number of mates per clutch (rather than across the whole season)
@@ -658,47 +749,64 @@ mates.by.fem.clutch <- shared.fert.clutch2.21 %>%
             num.clutches = length(unique(clutch_id_ind1)),
             num.chicks = sum(fert))
 
+# for collected clutches, no females had more than one UNK sire, so don't need to
+# change the numbers counted in mates.by.fem.clutch
+unk.fam.collect
 
-# subset to only replacememt clutch
+mates.by.fem.clutch.collect <- subset(mates.by.fem.clutch, mates.by.fem.clutch$Brood_ind1=="collected")
+mean(mates.by.fem.clutch.collect$num.mates)
+
+# calculate mean EP mates in collected clutch
+collect.ep <- mates.by.fem.clutch.collect$num.mates -1
+
+# save collected clutch table
+write.csv(mates.by.fem.clutch.collect, "output-files/num mates collected clutch.csv", row.names=F)
+
+# for replacement clutch, do need to update
+# subset to only replacement clutch
 mates.by.fem.clutch.replace <- subset(mates.by.fem.clutch, mates.by.fem.clutch$Brood_ind1==1)
 
-# only 2 replacement clutches had additional unknown dads
+# only 2 replacement clutches had additional unknown dads, from unk.fam.replace
+unk.fam.replace
 # Cooks-23 had 2 unk dads total, so add 1 to the number of mates
 
 mates.by.fem.clutch.replace.unk <- mates.by.fem.clutch.replace
 mates.by.fem.clutch.replace.unk$num.mates[2] <- 3
 
 # save mates in replacement clutch table
-write.csv(mates.by.fem.clutch.replace.unk, "generated-datatables/num mates replacement clutch.csv", row.names=F)
+write.csv(mates.by.fem.clutch.replace.unk, "output-files/num mates replacement clutch.csv", row.names=F)
 
+# for 2nd broods, Schaaps 80 had 2 UNK sires
+unk.fam.brood2
+
+# subset 2nd broods
+mates.by.fem.clutch.brood2 <- subset(mates.by.fem.clutch, mates.by.fem.clutch$Brood_ind1==2)
+
+mates.by.fem.clutch.brood2.unk <- mates.by.fem.clutch.brood2
+mates.by.fem.clutch.brood2.unk$num.mates[6] <- 3
+
+# updated table for number of mates per brood
+mates.by.fem.clutch.update <- rbind(mates.by.fem.clutch.collect, 
+                                    mates.by.fem.clutch.replace.unk,
+                                    mates.by.fem.clutch.brood2.unk)
 
 #-------------------------------------------------------------------------------
 # plot number of mates per clutch for each female
 #-------------------------------------------------------------------------------
 
-# count number of mates per female
-mates.by.clutch <- shared.fert.clutch2.21 %>%
-  group_by(clutch_id_ind1, FamilyID_mom, Brood_ind1) %>%
-  summarise(num.mates = length(unique(Band_dad)),
-            num.chicks = sum(fert))
 
 # change factor order for brood
-mates.by.clutch$Brood_ind1 <- factor(mates.by.clutch$Brood_ind1, 
+mates.by.fem.clutch.update$Brood_ind1 <- factor(mates.by.fem.clutch.update$Brood_ind1, 
                                      levels=c("collected","1","2"))
 
 # plot number of mates over time by female
-ggplot(mates.by.clutch, aes(x=Brood_ind1, y=num.mates)) + ylim(0.5,2.5) +
+ggplot(mates.by.fem.clutch.update, aes(x=Brood_ind1, y=num.mates)) + ylim(0.5,3.5) +
   geom_point(aes(size=num.chicks/2)) +
   geom_line(aes(group=FamilyID_mom)) + facet_wrap("FamilyID_mom") +
   ggtitle("Mates per brood for 2021 females") +
   ylab("Number of mates") + xlab("Brood") 
 
 
-ggplot(mates.by.clutch, aes(x=Brood_ind1, y=num.chicks)) + ylim(0.5,5.5) +
-  geom_point(aes(size=num.mates)) +
-  geom_line(aes(group=FamilyID_mom)) + facet_wrap("FamilyID_mom") +
-  ggtitle("Mates per brood for 2021 females") +
-  ylab("Number of chicks") + xlab("Brood")
 
 
 

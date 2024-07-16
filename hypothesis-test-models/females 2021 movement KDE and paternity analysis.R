@@ -6,10 +6,12 @@
 library(tidyverse)
 library(ggplot2)
 
+
+
 ### load data
 
 # paternity data for each clutch
-clutch <- read.csv("input-data/fert_2021_by_clutchID.csv")
+clutch <- read.csv("input-files/fert_2021_by_clutchID.csv")
 
 # update fertilization type for the Hepp clutch, where the dad is from Cooks
 # This should actually be classified as ep_same site since Cooks was the 
@@ -49,7 +51,7 @@ clutch.wp <- clutch %>%
 ### Subset tagged females only
 
 # KDE estimates which are in hectares
-areas <- read.csv("input-data/KDE probs_updated.csv")
+areas <- read.csv("input-files/KDE probs_updated.csv")
 
 
 # add column for family IDs to areas data
@@ -87,8 +89,9 @@ ggplot(clutch.move, aes(x=FamilyID_mom, y=fert, fill=fert_type)) +
   facet_grid(Brood_ind1~.) +
   ggtitle("Fertilization types across broods for 2021 tagged females")
 
-ggsave("generated-files/FigS3_fert by brood 2021 tagged females.png", w=5.5, h=4)
-ggsave("generated-files/FigS3_fert by brood 2021 tagged females.pdf", w=5.5, h=4)
+ggsave("output-files/FigS3_fert by brood 2021 tagged females.png", w=5.5, h=4)
+ggsave("output-files/FigS3_fert by brood 2021 tagged females.pdf", w=5.5, h=4)
+
 
 
 # calculate proportion wp in collected and replacement broods with SD
@@ -125,19 +128,19 @@ colnames(dat2)[24:25] <- c("proportion.close.50","proportion.close.100")
 dat2[dat2$FamilyID_mom=="Cooks-31",]$Site_ind1 <- "Cooks"
 
 # load data with number of overall mates
-mates <- read.csv("input-data/num mates chicks clutches per female 2021.csv")
-mates.replace <- read.csv("input-data/num mates replacement clutch.csv")
+mates <- read.csv("num mates chicks clutches per female 2021.csv")
+mates.replace <- read.csv("num mates replacement clutch.csv")
 
 colnames(mates.replace)[c(5,7)] <- c("mates.replacement", "chicks.replacement")
 
 # use belly avg brightness
-color <- read.csv("input-data/plumage-color.csv")
+color <- read.csv("plumage-color.csv")
 # pull out only nestID and female and male color
 color2 <- color[,c(1,5,7)]
 colnames(color2)[1] <- "bird"
 
 # add estimated max distance from barn
-est.max <- read.csv("input-data/estimated max distance from resampling_original.csv")
+est.max <- read.csv("estimated max distance from resampling_original.csv")
 colnames(est.max)[c(2,6)] <- c("bird","est.max.dist")
 
 dat2.2 <- left_join(dat2, color2, by="bird")
@@ -194,8 +197,11 @@ dat4 <- left_join(dat3, clutch.female.wp[,c(1,5)], by="Band_mom")
 
 ggplot(dat4, aes(prop.ep, prop.ep.season)) + geom_point()
 
+# add breeding group sizes
+dat4$group.size <- c(5,5,5,5,5,5,2,10,10,1,5)
+
 # save final table
-# write.csv(dat4, "generated-files/table for movement and mating models_v5.csv", row.names = F) 
+write.csv(dat4, "table for movement and mating models_v6.csv", row.names = F) 
 
 
 # Correlation plot among all variables------------------------------------------
@@ -203,7 +209,7 @@ ggplot(dat4, aes(prop.ep, prop.ep.season)) + geom_point()
 library(psych)
 
 # Manuscript Figure S1
-pairs.panels(dat4[,c(39:40,24,25, 26, 27)],
+pairs.panels(dat4[,c(37:39,41,24,25, 26, 27)],
              method="spearman",
              density=T,
              ellipses=F,
@@ -295,6 +301,24 @@ ggplot(dat4, aes(proportion.close.100, prop.ep)) + geom_point() +
   ylab("proportion of EP young in \nreplacement clutch") +
   ggtitle("Points within 100m vs. proportion of EP young")
 
+ggplot(dat4, aes(group.size, prop.ep)) + geom_point(alpha=0.5) +
+  xlab("Number of breeding pairs") + 
+  ylab("proportion of EP young in \nreplacement clutch") +
+  ggtitle("Group size vs. proportion of EP young")+
+  geom_smooth(method=lm, se=F)
+
+ggsave("group size vs propEP.png")
+
+cor.test(dat4$prop.ep, dat4$group.size, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$prop.ep and dat4$group.size
+# S = 177.67, p-value = 0.833
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#         rho 
+# -0.07680673 
+
 
 # Number of EP mates over the whole season
 
@@ -330,6 +354,364 @@ ggplot(dat4, aes(proportion.close.100, num.ep.mates)) + geom_point() +
   ggtitle("Points within 100m vs. Number of EP mates") +
   geom_smooth(method=lm)
 
+ggplot(dat4, aes(group.size, num.ep.mates)) + geom_point(alpha=0.3) +
+  xlab("Number of breeding pairs") + 
+  ylab("Number of EP mates") +
+  ggtitle("Group size vs. Number of EP mates")+
+  geom_smooth(method=lm, se=F)
+
+ggsave("group size vs number EP mates.png")
+
+cor.test(dat4$group.size, dat4$num.ep.mates, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$num.ep.mates
+# S = 73.772, p-value = 0.02567
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.6646718
+
+# group size vs. num EP mates in replacement
+ggplot(dat4, aes(group.size, mates.replacement.ep)) + 
+  geom_point(alpha=0.3) +
+  xlab("Number of breeding pairs") + 
+  ylab("Number of EP mates in replacement") +
+  ggtitle("Group size vs. Number of EP mates in replacement")+
+  geom_smooth(method=lm, se=F)
+
+ggsave("group size vs number EP mates in replacement.png")
+
+
+# group size vs. movement variables
+
+ggplot(dat4, aes(x=group.size, y=log.kde90)) +
+  geom_point() +
+  ylab("Log transformed 90% KDE area") +
+  xlab("Number of breeding pairs") +
+  ggtitle("90% KDE vs. Group size") +
+  geom_smooth(method=lm)
+
+cor.test(dat4$group.size, dat4$log.kde90, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$log.kde90
+# S = 156.1, p-value = 0.3863
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.2904407 
+
+ggplot(dat4, aes(x=group.size, y=log.kde50)) +
+  geom_point() +
+  ylab("Log transformed 50% KDE area") +
+  xlab("Number of breeding pairs") +
+  ggtitle("50% KDE vs. Group size")+
+  geom_smooth(method=lm, se=F)
+
+ggsave("kde50 vs group size.png")
+
+cor.test(dat4$group.size, dat4$log.kde50, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$log.kde50
+# S = 144.49, p-value = 0.3014
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.3432482 
+
+ggplot(dat4, aes(x=group.size, y=log.max.dist)) +
+  geom_point() +
+  ylab("Estimated max distance (m)") +
+  xlab("Number of breeding pairs") +
+  ggtitle("Max distance vs. Group size")+
+  geom_smooth(method=lm)
+
+ggplot(dat4, aes(x=group.size, y=proportion.close.50)) +
+  geom_point() +
+  ylab("Proportion GPS points within 50m of barn") +
+  xlab("Number of breeding pairs") +
+  ggtitle("Prop close 50m vs. Group size") +
+  geom_smooth(method=lm, se=F)
+
+ggsave("prop close 50 vs group size.png")
+
+cor.test(dat4$group.size, dat4$proportion.close.50, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$proportion.close.50
+# S = 225.82, p-value = 0.9384
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#         rho 
+# -0.02646392 
+
+ggplot(dat4, aes(x=group.size, y=proportion.close.100)) +
+  geom_point() +
+  ylab("Proportion GPS points within 100m of barn") +
+  xlab("Number of breeding pairs") +
+  ggtitle("Prop close 100m vs. Group size") +
+  geom_smooth(method=lm, se=F)
+
+cor.test(dat4$group.size, dat4$proportion.close.100, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$proportion.close.100
+# S = 235.1, p-value = 0.841
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#         rho 
+# -0.06864963 
+
+### Relationship between movement and plumage color ###
+
+# male plumage
+
+ggplot(dat4, aes(x=B_avg.bright.male, y=log.kde90)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed 90% KDE area") +
+  xlab("Social male belly average brightness") +
+  ggtitle("90% KDE vs. Male plumage color")
+
+cor.test(dat4$B_avg.bright.male, y=dat4$log.kde90, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.male and dat4$log.kde90
+# S = 224, p-value = 0.9676
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#         rho 
+# -0.01818182 
+
+ggplot(dat4, aes(x=B_avg.bright.male, y=log.kde50)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed 50% KDE area") +
+  xlab("Social male belly average brightness") +
+  ggtitle("50% KDE vs. Male plumage color")
+
+cor.test(dat4$B_avg.bright.male, y=dat4$log.kde50, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.male and dat4$log.kde50
+# S = 234, p-value = 0.8601
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#         rho 
+# -0.06363636 
+
+ggplot(dat4, aes(x=B_avg.bright.male, y=log.max.dist)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed estimated max distance from barn") +
+  xlab("Social male belly average brightness") +
+  ggtitle("Max distance vs. Male plumage color")
+
+cor.test(dat4$B_avg.bright.male, y=dat4$log.max.dist, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.male and dat4$log.max.dist
+# S = 170, p-value = 0.5031
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.2272727
+
+ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.close.50)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Proportion of GPS points within 50m of barn") +
+  xlab("Social male belly average brightness") +
+  ggtitle("Points within 50m vs. Male plumage color")
+
+cor.test(dat4$B_avg.bright.male, y=dat4$proportion.close.50, 
+         method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.male and dat4$proportion.close.50
+# S = 205.97, p-value = 0.8522
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# 0.06378149 
+
+ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.close.100)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Proportion of GPS points within 100m of barn") +
+  xlab("Social male belly average brightness") +
+  ggtitle("Points within 100m vs. Male plumage color")
+
+cor.test(dat4$B_avg.bright.male, y=dat4$proportion.close.100, 
+         method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.male and dat4$proportion.close.100
+# S = 196, p-value = 0.7549
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.1090909 
+
+
+# female plumage
+
+ggplot(dat4, aes(x=B_avg.bright.female, y=log.kde90)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed 90% KDE area") +
+  xlab("Female belly average brightness") +
+  ggtitle("90% KDE vs. Female plumage color")
+
+cor.test(dat4$B_avg.bright.female, y=dat4$log.kde90, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.female and dat4$log.kde90
+# S = 268, p-value = 0.5209
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# -0.2181818
+
+ggplot(dat4, aes(x=B_avg.bright.female, y=log.kde50)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed 50% KDE area") +
+  xlab("Female belly average brightness") +
+  ggtitle("50% KDE vs. Female plumage color")
+
+cor.test(dat4$B_avg.bright.female, y=dat4$log.kde50, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.female and dat4$log.kde50
+# S = 246, p-value = 0.7343
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# -0.1181818 
+
+ggplot(dat4, aes(x=B_avg.bright.female, y=log.max.dist)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Log transformed estimated max distance from barn") +
+  xlab("Female belly average brightness") +
+  ggtitle("Max distance vs. Female plumage color")
+
+ggsave("max dist vs female plumage.png")
+
+cor.test(dat4$B_avg.bright.female, y=dat4$log.max.dist, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.female and dat4$log.max.dist
+# S = 292, p-value = 0.327
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# -0.3272727 
+
+ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.close.50)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Proportion of GPS points within 50m of barn") +
+  xlab("Female belly average brightness") +
+  ggtitle("Points within 50m vs. Female plumage color")
+
+ggsave("proportion close 50 vs female plumage.png")
+
+cor.test(dat4$B_avg.bright.female, y=dat4$proportion.close.50, 
+         method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.female and dat4$proportion.close.50
+# S = 167.88, p-value = 0.4831
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.2369027 
+
+ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.close.100)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Proportion of GPS points within 100m of barn") +
+  xlab("Female belly average brightness") +
+  ggtitle("Points within 100m vs. Female plumage color")
+
+cor.test(dat4$B_avg.bright.female, y=dat4$proportion.close.100, 
+         method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$B_avg.bright.female and dat4$proportion.close.100
+# S = 242, p-value = 0.7757
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#  rho 
+# -0.1 
+
+
+### Relationship between plumage and group size ###
+
+ggplot(dat4, aes(x=group.size, y=B_avg.bright.female)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Female belly average brightness") +
+  xlab("Number of breeding pairs at barn") +
+  ggtitle("Female plumage vs. Group size")
+
+ggsave("female plumage vs group size all data.png")
+
+cor.test(dat4$group.size, dat4$B_avg.bright.female, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$B_avg.bright.female
+# S = 280.41, p-value = 0.4138
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# -0.2745985 
+
+# check correlation without palest female
+ggplot(subset(dat4, dat4$B_avg.bright.female<33), 
+       aes(x=group.size, y=B_avg.bright.female)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Female belly average brightness") +
+  xlab("Number of breeding pairs at barn") +
+  ggtitle("Female plumage vs. Group size\nexcluding palest female")
+
+ggsave("female plumage vs. group size excluding palest.png")
+
+cor.test(subset(dat4$group.size, dat4$B_avg.bright.female<33), 
+         subset(dat4$B_avg.bright.female, dat4$B_avg.bright.female<33),
+         method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  subset(dat4$group.size, dat4$B_avg.bright.female < 33) and subset(dat4$B_avg.bright.female, dat4$B_avg.bright.female < 33)
+# S = 284.34, p-value = 0.01807
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# -0.7232967
+
+ggplot(dat4, aes(x=group.size, y=B_avg.bright.male)) +
+  geom_point() +
+  geom_smooth(method=lm, se=F)+
+  ylab("Social male belly average brightness") +
+  xlab("Number of breeding pairs at barn") +
+  ggtitle("Social male plumage vs. Group size")
+
+ggsave("male plumage vs group size.png")
+
+cor.test(dat4$group.size, dat4$B_avg.bright.male, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$group.size and dat4$B_avg.bright.male
+# S = 204.9, p-value = 0.841
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#        rho 
+# 0.06864963 
 
 
 ################################################################################
