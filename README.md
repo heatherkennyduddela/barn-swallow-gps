@@ -1,8 +1,8 @@
 # barn-swallow-gps
 
-This file contains details about the data processing and analysis for relating GPS movement data of female barn swallows to their extra-pair mating outcomes in terms of the proportion of extra-pair young in their clutch, and the number of sires represented in each clutch. 
+This file contains details about the data processing and analysis for relating GPS movement data of female barn swallows to their extra-pair mating outcomes in terms of the proportion of extra-pair offspring, number of extra-pair offspring, and number of sires represented in each clutch. 
 
-These results are published in the article title "Female Space Use and Plumage Colour Correlate with Extra-pair Mating in Barn Swallows". 
+These results are published in the article title "Female Space Use and Plumage Colour Correlate with Extra-pair Mating in Barn Swallow Replacement Clutches". 
 Article authors: Heather V. Kenny-Duddela, Drew R. Schield, Kayleigh P. Keller, Rebecca J. Safran
 
 The steps described require the following software: 
@@ -15,7 +15,9 @@ For details about processing genomic data and caclulating pairwise relatedness, 
 
 * [Process spatial data from GPS tags](#processing-gps-data)
 * [Paternity assignment using relatedness](#paternity-assignment-using-relatedness)
-* [Hypothesis testing and models](#hypothesis-testing-and-models)
+* [Make data table for models](#make-data-table-for-models)
+* [Models for replacement clutch](#models-for-replacement-clutch)
+* [Models for change in paternity](#models-for-change-in-paternity)
 
 ### Processing GPS Data
 
@@ -52,24 +54,46 @@ Use the script `paternity 2021 assignment with lcMLkin output.R` to identify gen
 [back to top](#barn-swallow-gps)
 
 
-### Hypothesis testing and models
+### Make data table for models
 
-To investigate hypotheses related to extra-pair mating, female movement, and plumage color, use the script `females 2021 movement KDE and paternity analysis.R` This script takes the following input data: 
+To make the data table used in modeling, use the script `make table and exploratory figs.R` This script takes the following input data: 
 
 * `fert_2021_by_clutchID.csv` generated in the paternity assignment step
 * `KDE probs_updated.csv` generated in the spatial data processing step
 * `num mates chicks clutches per female 2021.csv` generated in the paternity assignment step
 * `num mates replacement clutch.csv` generated in the paternity assignment step
-* `plumage-color` belly average brightness for females and males
+* `num mates collected clutch.csv` generated in the paternity assignment step
+* `plumage-color-mass.csv` belly average brightness for females and males, and female mass
 * `estimated max distance from resampling_original.csv` generated in the spatial data processing step
 
 This script generates the following results reported in the manuscript: 
 
-* Figure 2
-* Figures S1 and S3-S7
-* Tables S3 and S4
-* Table 2 and Tables S6-S8 were build manually using model summary outputs
+* Figure S1
+* Figures S2 panels a-d
 
 [back to top](#barn-swallow-gps)
 
 
+### Models for replacement clutch
+
+To fit models of extra-pair mating in the replacement clutch, use the script `models replacement clutch.R` This script takes the following input data: 
+
+* `table for movement and mating models_BES.csv` generated in the make table for models step. 
+
+This script generates the following results reported in the manuscript: 
+
+* Figure 2 panels a and b
+* Figure S6
+* Figure S7
+* Model AIC tables S6-S8
+
+[back to top](#barn-swallow-gps)
+
+
+### Models for change in paternity
+
+To fit models for the change in extra-pair mating between successive clutches, use the script `change in paternity models.R`. This script takes the following input data: 
+
+* `table for movement and mating models_BES.csv` generated in the make table for models step.
+
+[back to top](#barn-swallow-gps)
