@@ -2,7 +2,7 @@
 
 This file contains details about the data processing and analysis for relating GPS movement data of female barn swallows to their extra-pair mating outcomes in terms of the proportion of extra-pair offspring, number of extra-pair offspring, and number of sires represented in each clutch. 
 
-These results are published in the article title "Female Space Use and Plumage Colour Correlate with Extra-pair Mating in Barn Swallow Replacement Clutches". 
+These results are published in the article title "Female Space Use and Plumage Color Correlate with Extra-pair Mating in Barn Swallow Replacement Clutches". 
 Article authors: Heather V. Kenny-Duddela, Drew R. Schield, Kayleigh P. Keller, Rebecca J. Safran
 
 The steps described require the following software: 
@@ -21,7 +21,7 @@ For details about processing genomic data and caclulating pairwise relatedness, 
 
 ### Processing GPS Data
 
-Raw GPS data can be downloaded from MoveBank. The GPS data used for this projet and posted to this repository has been filtered to only include valid fixes and those with high horizontal accuracy (HDOP > 5). Raw data also includes a reference fix that was taken prior to deployment. Those reference points have been removed from the data provided here. Scripts and data are in the folder `process-spatial-data`.
+Raw GPS data can be downloaded from MoveBank. The GPS data used for this project and posted to this repository has been filtered to only include valid fixes and those with high horizontal accuracy (HDOP > 5). Raw data also includes a reference fix that was taken prior to deployment. Those reference points have been removed from the data provided here. Scripts and data are in the folder `process-spatial-data`.
 
 
 Use the script `KDE with adehabitatHR_git.R` to calculate 50% and 90% kernel density estimator areas, and the proportion of points within 50 and 100m of the home barn. The script takes the following input data: 
@@ -29,10 +29,10 @@ Use the script `KDE with adehabitatHR_git.R` to calculate 50% and 90% kernel den
 * `GPS points all sites.csv` table of GPS points for each female
 * `Barn where tags were deployed 2021.csv` table of nesting barn locations
 
-This script produces the fillowing figures reported in the manuscript: 
+This script produces the following figures reported in the manuscript: 
 
 * Figure 1
-* Figure S2
+* Figures S4 and S5
 
 
 Use the script `est-max-dist.R` to calculate the estimated maximum distance traveled from the nesting barn for each bird. This script downsamples to the fewest number of GPS points per bird (60), and repeatedly takes random samples of 60 points for each bird to calculate the estimated maximum distance. This helps account for uneven sampling across birds. The final distance estimates are the average for each bird across 100 replicats. This script takes the following input data: 
