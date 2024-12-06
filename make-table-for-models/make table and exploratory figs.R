@@ -1,6 +1,6 @@
 
 # GPS tagging 2021 - analysis for hypothesis testing
-# Version for BES submission (June 2024)
+# Version for BES submission (Nov 2024)
 # Heather Kenny-Duddela
 
 # libraries
@@ -54,6 +54,9 @@ clutch.wp <- clutch %>%
 
 # KDE estimates which are in hectares
 areas <- read.csv("input-files/KDE probs_updated.csv")
+# reverse direction of points past 50m and 100m
+areas$prop.far50 <- 1 - areas$prop.close50
+areas$prop.far100 <- 1 - areas$prop.close100
 
 
 # add column for family IDs to areas data
@@ -76,14 +79,19 @@ areas$FamilyID_mom[which(areas$bird=="st20")] <- "Struthers-20"
 # subset clutch data
 clutch.move <- subset(clutch, clutch$FamilyID_mom %in% areas$FamilyID_mom)
 
+# keep only collected and replacement clutches
+clutch.move2 <- subset(clutch.move, clutch.move$Brood_ind1 != "2")
+# add "replacement" label
+clutch.move2$Brood_ind1 <- as.character(clutch.move2$Brood_ind1)
+clutch.move2$Brood_ind1[which(clutch.move2$Brood_ind1=="1")] <- "replacement"
+
 # subset wp data
 clutch.wp.move <- subset(clutch.wp, clutch.wp$FamilyID_mom %in% areas$FamilyID_mom)
 
 
 # plot paternity proportions with just GPS females
-# Manuscript Figure S1
-
-ggplot(clutch.move, aes(x=FamilyID_mom, y=fert, fill=fert_type)) + 
+# Manuscript Figure 3
+ggplot(clutch.move2, aes(x=FamilyID_mom, y=fert, fill=fert_type)) + 
   geom_bar(position="stack", stat="identity") +
   theme(axis.text.x = element_text(angle=90)) +
   scale_fill_viridis_d() +
@@ -141,7 +149,7 @@ dat1.3 <- left_join(dat, dat1.2[,c(2,5:9)], by="FamilyID_mom")
 dat2 <- left_join(dat1.3, areas, by="FamilyID_mom")
 
 # change column names 
-colnames(dat2)[29:30] <- c("proportion.close.50","proportion.close.100")
+colnames(dat2)[31:32] <- c("proportion.past.50","proportion.past.100")
 
 # correct Cooks site for the Hepp bird
 dat2[dat2$FamilyID_mom=="Cooks-31",]$Site_ind1 <- "Cooks"
@@ -185,7 +193,7 @@ dat3$mates.replacement.ep[-c(4,5)] <- dat3$mates.replacement[-c(4,5)] -1
 dat3$mates.replacement.ep[c(4,5)] <- dat3$mates.replacement[c(4,5)]
 
 
-colnames(dat3)[c(31,32)] <- c("B_avg.bright.female", "B_avg.bright.male")
+colnames(dat3)[c(33,34)] <- c("B_avg.bright.female", "B_avg.bright.male")
 
 # try log-transforming area metrics to make them less skewed
 
@@ -219,7 +227,7 @@ dat4$diff.num.ep <- dat4$num.ep - dat4$num.ep.collected
 dat4$diff.ep.sires <- dat4$mates.replacement.ep - dat4$mates.collected.ep
 
 # save final table
-write.csv(dat4, "output-files/table for movement and mating models_BES.csv", row.names = F) 
+write.csv(dat4, "output-files/table for movement and mating models_BES_R.csv", row.names = F) 
 
 ################################################################################
 # Correlation plot among all variables------------------------------------------
@@ -232,8 +240,8 @@ library(psych)
 # note that the MASS package masks the select function from dplyr, so you
 # can't run the below line if MASS is currently loaded
 
-vis <- select(dat4,log.kde50, log.kde90, log.max.dist, proportion.close.50,
-              proportion.close.100, B_avg.bright.female, B_avg.bright.male, 
+vis <- select(dat4,log.kde50, log.kde90, log.max.dist, proportion.past.50,
+              proportion.past.100, B_avg.bright.female, B_avg.bright.male, 
               mass, group.size)
 
 pairs.panels(vis[,-c(1:3)],
@@ -245,17 +253,61 @@ pairs.panels(vis[,-c(1:3)],
 
 # Manuscript Fig S3
 # correlations among just the movement variables
-vis2 <-  select(dat4,log.kde50, log.kde90, log.max.dist, proportion.close.50,
-                proportion.close.100)
-png("output-files/FigS3_correlation plot movement vars.png", pointsize=10, width=4500, height=3000, res=600)
-pairs.panels(vis2[,4:8],
+vis2 <-  select(dat4,log.kde50, log.kde90, log.max.dist, proportion.past.50,
+                proportion.past.100)
+png("output-files/FigS2_correlation plot movement vars.png", pointsize=10, width=4500, height=3000, res=600)
+pairs.panels(vis2.df[,4:8],
              method="spearman",
              density=T,
              ellipses=F,
              smooth=F,
-             stars=T)
+             stars=T,
+             breaks = 3)
 dev.off()
 
+# specify histograms on the diagonal
+panel.hist <- function(x, ...)
+{
+  #from help of pairs
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5) )
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y/max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col="cyan")
+}
+
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  #from help of pairs
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y,use="pairwise.complete.obs"))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.5/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor)
+}
+
+
+# make plot using base pairs function
+png("output-files/FigS2_correlation plot movement vars hist.png", pointsize=10, width=4500, height=3000, res=600)
+pairs(vis2.df[,4:8], diag.panel = panel.hist, upper.panel = panel.cor)
+dev.off()
+
+
+vis3 <- select(dat4, proportion.past.100,
+               proportion.past.50)
+
+pairs(vis3[,4:5])
+
+pairs.panels(vis3[,4:5],
+             method="spearman",
+             density=T,
+             ellipses=F,
+             smooth=F,
+             stars=T,
+             breaks = 10)
 
 
 # correlation between collected and replacement prop ep
@@ -381,8 +433,9 @@ colnames(clutch.lines2)[3:4] <- c("clutch", "clutch.size")
 ggplot(clutch.lines2, aes(x = clutch, y = clutch.size)) +  
   geom_line(aes(linewidth=(Freq), group=transition), alpha=0.5) +
   scale_linewidth(range=c(1,3), breaks=c(1,2,3)) +
-  geom_count(inherit.aes=F, data=pat.change3, 
-             aes(x=clutch, y=clutch.size)) +
+  geom_count(inherit.aes=F, data=pat.change3, size=3,
+             aes(x=clutch, y=clutch.size, shape=after_stat(n))) +
+  scale_shape_binned() +
   xlab("Clutch type") +
   ylab("Number of offspring sampled")
 
@@ -553,21 +606,21 @@ ggplot(dat4, aes(log.kde50, prop.ep)) + geom_point() +
   ggtitle("50% KDE area vs. \nproportion of EP young")
 
 
-ggplot(dat4, aes(proportion.close.50, prop.ep)) + geom_point() +
-  xlab("Proportion of GPS points within 50m of barn") + 
+ggplot(dat4, aes(proportion.past.50, prop.ep)) + geom_point() +
+  xlab("Proportion of GPS points past 50m of barn") + 
   ylab("proportion of EP young in \nreplacement clutch") +
-  ggtitle("Points within 50m vs. proportion of EP young")
+  ggtitle("points past 50m vs. proportion of EP young")
 
-ggplot(dat4, aes(proportion.close.50, prop.ep)) + geom_point() +
-  xlab("Proportion of GPS points within 50m of barn") + 
+ggplot(dat4, aes(proportion.past.50, prop.ep)) + geom_point() +
+  xlab("Proportion of GPS points past 50m of barn") + 
   ylab("proportion of EP young in \nreplacement clutch") +
-  ggtitle("Points within 50m vs. proportion of EP young") +
+  ggtitle("points past 50m vs. proportion of EP young") +
   geom_smooth(method=lm)
 
-ggplot(dat4, aes(proportion.close.100, prop.ep)) + geom_point() +
-  xlab("Proportion of GPS points within 100m of barn") + 
+ggplot(dat4, aes(proportion.past.100, prop.ep)) + geom_point() +
+  xlab("Proportion of GPS points past 100m of barn") + 
   ylab("proportion of EP young in \nreplacement clutch") +
-  ggtitle("Points within 100m vs. proportion of EP young")
+  ggtitle("points past 100m vs. proportion of EP young")
 
 ggplot(dat4, aes(group.size, prop.ep)) + geom_point(alpha=0.5) +
   xlab("Number of breeding pairs") + 
@@ -743,41 +796,41 @@ ggplot(dat4, aes(x=group.size, y=log.max.dist)) +
 
 cor.test(dat4$group.size, dat4$est.max.dist, method="spearman")
 
-ggplot(dat4, aes(x=group.size, y=proportion.close.50)) +
+ggplot(dat4, aes(x=group.size, y=proportion.past.50)) +
   geom_point() +
-  ylab("Proportion GPS points within 50m of barn") +
+  ylab("Proportion GPS points past 50m from the barn") +
   xlab("Number of breeding pairs") +
   ggtitle("Prop close 50m vs. Group size") +
   geom_smooth(method=lm, se=F)
 
 
 
-cor.test(dat4$group.size, dat4$proportion.close.50, method="spearman")
+cor.test(dat4$group.size, dat4$proportion.past.50, method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$group.size and dat4$proportion.close.50
+# data:  dat4$group.size and dat4$proportion.past.50
 # S = 225.82, p-value = 0.9384
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #         rho 
 # -0.02646392 
 
-ggplot(dat4, aes(x=group.size, y=proportion.close.100)) +
+ggplot(dat4, aes(x=group.size, y=proportion.past.100)) +
   geom_point() +
-  ylab("Proportion GPS points within 100m of barn") +
+  ylab("Proportion GPS points past 100m of barn") +
   xlab("Number of breeding pairs") +
   ggtitle("Prop close 100m vs. Group size") +
   geom_smooth(method=lm, se=F)
 
-cor.test(dat4$group.size, dat4$proportion.close.100, method="spearman")
+cor.test(dat4$group.size, dat4$proportion.past.100, method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$group.size and dat4$proportion.close.100
+# data:  dat4$group.size and dat4$proportion.past.100
 # S = 235.1, p-value = 0.841
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #         rho 
-# -0.06864963 
+# 0.06864963 
 
 ### Relationship between movement and plumage color----------------------------
 
@@ -834,41 +887,41 @@ cor.test(dat4$B_avg.bright.male, y=dat4$log.max.dist, method="spearman")
 #       rho 
 # 0.2272727
 
-ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.close.50)) +
+ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.past.50)) +
   geom_point() +
   geom_smooth(method=lm, se=F)+
-  ylab("Proportion of GPS points within 50m of barn") +
+  ylab("Proportion of GPS points past 50m of barn") +
   xlab("Social male belly average brightness") +
-  ggtitle("Points within 50m vs. Male plumage color")
+  ggtitle("points past 50m vs. Male plumage color")
 
-cor.test(dat4$B_avg.bright.male, y=dat4$proportion.close.50, 
+cor.test(dat4$B_avg.bright.male, y=dat4$proportion.past.50, 
          method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$B_avg.bright.male and dat4$proportion.close.50
+# data:  dat4$B_avg.bright.male and dat4$proportion.past.50
 # S = 205.97, p-value = 0.8522
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #        rho 
 # 0.06378149 
 
-ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.close.100)) +
+ggplot(dat4, aes(x=B_avg.bright.male, y=proportion.past.100)) +
   geom_point() +
   geom_smooth(method=lm, se=F)+
-  ylab("Proportion of GPS points within 100m of barn") +
+  ylab("Proportion of GPS points past 100m of barn") +
   xlab("Social male belly average brightness") +
-  ggtitle("Points within 100m vs. Male plumage color")
+  ggtitle("points past 100m vs. Male plumage color")
 
-cor.test(dat4$B_avg.bright.male, y=dat4$proportion.close.100, 
+cor.test(dat4$B_avg.bright.male, y=dat4$proportion.past.100, 
          method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$B_avg.bright.male and dat4$proportion.close.100
+# data:  dat4$B_avg.bright.male and dat4$proportion.past.100
 # S = 196, p-value = 0.7549
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #       rho 
-# 0.1090909 
+# -0.1090909 
 
 
 # female plumage
@@ -926,43 +979,43 @@ cor.test(dat4$B_avg.bright.female, y=dat4$log.max.dist, method="spearman")
 #        rho 
 # -0.3272727 
 
-ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.close.50)) +
+ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.past.50)) +
   geom_point() +
   geom_smooth(method=lm, se=F)+
-  ylab("Proportion of GPS points within 50m of barn") +
+  ylab("Proportion of GPS points past 50m of barn") +
   xlab("Female belly average brightness") +
-  ggtitle("Points within 50m vs. Female plumage color")
+  ggtitle("points past 50m vs. Female plumage color")
 
 
 
-cor.test(dat4$B_avg.bright.female, y=dat4$proportion.close.50, 
+cor.test(dat4$B_avg.bright.female, y=dat4$proportion.past.50, 
          method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$B_avg.bright.female and dat4$proportion.close.50
+# data:  dat4$B_avg.bright.female and dat4$proportion.past.50
 # S = 167.88, p-value = 0.4831
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #       rho 
 # 0.2369027 
 
-ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.close.100)) +
+ggplot(dat4, aes(x=B_avg.bright.female, y=proportion.past.100)) +
   geom_point() +
   geom_smooth(method=lm, se=F)+
-  ylab("Proportion of GPS points within 100m of barn") +
+  ylab("Proportion of GPS points past 100m of barn") +
   xlab("Female belly average brightness") +
-  ggtitle("Points within 100m vs. Female plumage color")
+  ggtitle("points past 100m vs. Female plumage color")
 
-cor.test(dat4$B_avg.bright.female, y=dat4$proportion.close.100, 
+cor.test(dat4$B_avg.bright.female, y=dat4$proportion.past.100, 
          method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$B_avg.bright.female and dat4$proportion.close.100
+# data:  dat4$B_avg.bright.female and dat4$proportion.past.100
 # S = 242, p-value = 0.7757
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #  rho 
-# -0.1 
+# 0.1 
 
 ### Relationship between mass and movement--------------------------------------
 
@@ -996,25 +1049,25 @@ cor.test(dat4$mass, dat4$log.max.dist, method="spearman")
 #       rho 
 # 0.1548979 
 
-cor.test(dat4$mass, dat4$proportion.close.50, method="spearman")
+cor.test(dat4$mass, dat4$proportion.past.50, method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$mass and dat4$proportion.close.50
+# data:  dat4$mass and dat4$proportion.past.50
 # S = 271.23, p-value = 0.4908
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #        rho 
 # -0.2328767 
 
-cor.test(dat4$mass, dat4$proportion.close.100, method="spearman")
+cor.test(dat4$mass, dat4$proportion.past.100, method="spearman")
 # Spearman's rank correlation rho
 # 
-# data:  dat4$mass and dat4$proportion.close.100
+# data:  dat4$mass and dat4$proportion.past.100
 # S = 228.02, p-value = 0.9153
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #         rho 
-# -0.03644656 
+# 0.03644656 
 
 # mass and female plumage color
 cor.test(dat4$mass, dat4$B_avg.bright.female, method="spearman")
@@ -1120,56 +1173,56 @@ cor.test(dat4$B_avg.bright.male, dat4$mates.collected.ep, method="spearman")
 ### Difference in EP mating ----------------------------------------------------
 
 ### movement
-ggplot(dat4, aes(x=proportion.close.50, y=diff.ep.prop)) + geom_point() +
+ggplot(dat4, aes(x=proportion.past.50, y=diff.ep.prop)) + geom_point() +
   geom_smooth(method=lm) + 
   ggtitle("Relationship between change in prop EP and \nmovement (Spearman -0.674, p=0.032)")
 
 
 
-cor.test(dat4$proportion.close.50, dat4$diff.ep.prop,
+cor.test(dat4$proportion.past.50, dat4$diff.ep.prop,
          method="spearman", na.rm=T)
 # Spearman's rank correlation rho
 # 
-# data:  dat4$proportion.close.50 and dat4$diff.ep.prop
+# data:  dat4$proportion.past.50 and dat4$diff.ep.prop
 # S = 276.34, p-value = 0.03231
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #        rho 
-# -0.6747752 
+# 0.6747752 
 
-ggplot(dat4, aes(x=proportion.close.50, y=diff.num.ep)) + geom_point() +
+ggplot(dat4, aes(x=proportion.past.50, y=diff.num.ep)) + geom_point() +
   geom_smooth(method=lm) +
   ggtitle("Relationship between change in number of EP \nyoung and movement (Spearman -0.477, p=0.163)")
 
 
 
-cor.test(dat4$proportion.close.50, dat4$diff.num.ep,
+cor.test(dat4$proportion.past.50, dat4$diff.num.ep,
          method="spearman", na.rm=T)
 # Spearman's rank correlation rho
 # 
-# data:  dat4$proportion.close.50 and dat4$diff.num.ep
+# data:  dat4$proportion.past.50 and dat4$diff.num.ep
 # S = 243.72, p-value = 0.1633
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #        rho 
-# -0.4770665 
+# 0.4770665 
 
-ggplot(dat4, aes(x=proportion.close.50, y=diff.ep.sires)) + geom_point() +
+ggplot(dat4, aes(x=proportion.past.50, y=diff.ep.sires)) + geom_point() +
   geom_smooth(method=lm) +
   ggtitle("Relationship between change in number of EP sires \nand movement (Spearman -0.417, p=0.229)")
 
 
 
-cor.test(dat4$proportion.close.50, dat4$diff.ep.sires,
+cor.test(dat4$proportion.past.50, dat4$diff.ep.sires,
          method="spearman", na.rm=T)
 # Spearman's rank correlation rho
 # 
-# data:  dat4$proportion.close.50 and dat4$diff.ep.sires
+# data:  dat4$proportion.past.50 and dat4$diff.ep.sires
 # S = 233.96, p-value = 0.2294
 # alternative hypothesis: true rho is not equal to 0
 # sample estimates:
 #       rho 
-# -0.417917 
+# 0.417917 
 
 
 ### female plumage

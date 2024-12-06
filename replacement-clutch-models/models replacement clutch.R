@@ -10,8 +10,39 @@ setwd("C:/Users/heath/Documents/CU Boulder/BARS fieldwork/2022 Field and Lab/Pat
 
 
 # load data
-dat4 <- read.csv("input-files/table for movement and mating models_BES.csv")
+dat4 <- read.csv("input-files/table for movement and mating models_BES_R.csv")
 
+# check correlations between prop EPO, num EPO, and num EP sires
+
+cor.test(dat4$prop.ep, dat4$num.ep, method="spearman")
+# Spearman's rank correlation rho
+# 
+# # data:  dat4$prop.ep and dat4$num.ep
+# # S = 28.28, p-value = 0.003053
+# # alternative hypothesis: true rho is not equal to 0
+# # sample estimates:
+# #      rho 
+# # 0.828609
+
+cor.test(dat4$prop.ep, dat4$mates.replacement.ep, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$prop.ep and dat4$mates.replacement.ep
+# S = 21.784, p-value = 0.00113
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#       rho 
+# 0.8679749 
+
+cor.test(dat4$num.ep, dat4$mates.replacement.ep, method="spearman")
+# Spearman's rank correlation rho
+# 
+# data:  dat4$num.ep and dat4$mates.replacement.ep
+# S = 36.045, p-value = 0.007582
+# alternative hypothesis: true rho is not equal to 0
+# sample estimates:
+#      rho 
+# 0.781548
 
 
 # Models!-----------------------------------------------------------------------
@@ -21,7 +52,8 @@ library(broom)# for calculating confidence intervals around coefficient estimate
 library(AICcmodavg) # for calculating AICc
 library(car) # for Anova function
 library(dplyr) # for data table manipulation
-library(ggplot2) # for plotting 
+library(ggplot2) # for plotting
+library(jtools) # for effect plots
 
 # helpful threads about offsets and weights in Poisson and binomial models
 # https://stats.stackexchange.com/questions/264071/how-is-a-poisson-rate-regression-equal-to-a-poisson-regression-with-correspondin
@@ -38,8 +70,8 @@ library(ggplot2) # for plotting
 # Proportion of EP in replacement clutch predicted by different movement components
 
 # Model proportion EP as binomial with a weights term for brood size
-# for binomial family, response can be specified as numerical value 0 to 1 as proportion of 
-# successful cases, with total number of cases given by weights
+# for binomial family, response can be specified as numerical value 0 to 1 as 
+# proportion of successful cases, with total number of cases given by weights
 
 
 # 90% KDE
@@ -60,8 +92,8 @@ summary(kde50)
 confint(kde50)
 
 
-# prop within 50m
-prop50m <- glm(prop.ep ~ proportion.close.50 + B_avg.bright.female, 
+# prop past 50m
+prop50m <- glm(prop.ep ~ proportion.past.50 + B_avg.bright.female, 
                weights=clutch.size, data=dat4, 
                family="binomial")
 summary(prop50m)
@@ -70,8 +102,9 @@ plot(fitted(prop50m) ~ resid(prop50m, type="pearson"))
 confint(prop50m)
 
 
-# prop within 100m
-prop100m <- glm(prop.ep ~ proportion.close.100 + B_avg.bright.female, weights=clutch.size, data=dat4,
+# prop past 100m
+prop100m <- glm(prop.ep ~ proportion.past.100 + B_avg.bright.female, 
+                weights=clutch.size, data=dat4,
                 family="binomial")
 summary(prop100m)
 confint(prop100m)
@@ -122,15 +155,15 @@ confint(numEP.kde50)
 hist(resid(numEP.kde50, type="pearson"))
 plot(fitted(numEP.kde50) ~ resid(numEP.kde50, type="pearson"))
 
-# proportion points within 50
-numEP.prop50m <- glm(num.ep ~ proportion.close.50 + 
+# proportion points past 50
+numEP.prop50m <- glm(num.ep ~ proportion.past.50 + 
                                B_avg.bright.female, 
                              data=dat4, family="poisson")
 summary(numEP.prop50m)
 confint(numEP.prop50m)
 
-# proportion points within 100m
-numEP.prop100m <- glm(num.ep ~ proportion.close.100 + 
+# proportion points past 100m
+numEP.prop100m <- glm(num.ep ~ proportion.past.100 + 
                                 B_avg.bright.female, 
                               data=dat4, family="poisson")
 summary(numEP.prop100m)
@@ -156,7 +189,7 @@ null.rep.poisson <- glm(mates.replacement.ep ~ chicks.replacement ,
                         data=dat4, family="poisson")
 AICc(null.rep.poisson) # 27.955
 
-# quasi-poisson can model
+# quasi-poisson model
 null.rep.quasi <- glm(mates.replacement.ep ~ chicks.replacement, data=dat4, family="quasipoisson")
 summary(null.rep.quasi)  # (Dispersion parameter for quasipoisson family taken to be 0.6730484)
 
@@ -170,7 +203,8 @@ AICc(null.rep.nb) # 32.24147
 
 
 # 90% KDE
-mates.rep.kde90.cov <- glm(mates.replacement.ep ~ scale(log.kde90) + chicks.replacement +
+mates.rep.kde90.cov <- glm(mates.replacement.ep ~ scale(log.kde90) + 
+                             chicks.replacement +
                              B_avg.bright.female, 
                            data=dat4, family="poisson")
 summary(mates.rep.kde90.cov)
@@ -179,7 +213,8 @@ hist(resid(mates.rep.kde90.cov, type="pearson"))
 plot(fitted(mates.rep.kde90.cov) ~ resid(mates.rep.kde90.cov, type="pearson"))
 
 # 50% KDE
-mates.rep.kde50.cov <- glm(mates.replacement.ep ~ scale(log.kde50) + chicks.replacement +
+mates.rep.kde50.cov <- glm(mates.replacement.ep ~ scale(log.kde50) + 
+                             chicks.replacement +
                              B_avg.bright.female, 
                            data=dat4, family="poisson")
 summary(mates.rep.kde50.cov)
@@ -187,15 +222,16 @@ confint(mates.rep.kde50.cov)
 hist(resid(mates.rep.kde50.cov, type="pearson"))
 plot(fitted(mates.rep.kde50.cov) ~ resid(mates.rep.kde50.cov, type="pearson"))
 
-# proportion points within 50
-mates.rep.prop50m.cov <- glm(mates.replacement.ep ~ proportion.close.50 + chicks.replacement +
+# proportion points past 50
+mates.rep.prop50m.cov <- glm(mates.replacement.ep ~ proportion.past.50 + 
+                               chicks.replacement +
                                B_avg.bright.female, 
                              data=dat4, family="poisson")
 summary(mates.rep.prop50m.cov)
 confint(mates.rep.prop50m.cov)
 
-# proportion points within 100m
-mates.rep.prop100m.cov <- glm(mates.replacement.ep ~ proportion.close.100 + 
+# proportion points past 100m
+mates.rep.prop100m.cov <- glm(mates.replacement.ep ~ proportion.past.100 + 
                                 chicks.replacement +
                                 B_avg.bright.female, 
                               data=dat4, family="poisson")
@@ -278,6 +314,7 @@ mates.rep.modmanes.plum <- c("mates.rep.plum.cov",
 
 # Manuscript Table S8
 mates.rep.plum.table <- aictab(mates.rep.models.plum, mates.rep.modmanes.plum)
+
 write.csv(mates.rep.plum.table, "output-files/TableS8_AIC table for mates in replacement_BES.csv", row.names=F)
 
 
@@ -285,15 +322,16 @@ write.csv(mates.rep.plum.table, "output-files/TableS8_AIC table for mates in rep
 
 ################################################################################
 #-------------------------------------------------------------------------------
-# Compare the following models to test hypothesis that space use interacts with 
-# female plumage
+# Compare the following models to test hypothesis that space use influences
+# EPP alone, and after accounting for plumage color
 
 
 
 # LIKELIHOOD RATIO TESTS FOR HYPOTHESIS TESTING
 
+# 1) movement only
 # 2) movement + female plumage
-# 3) movement * female plumage
+
 
 
 # Explanation from Kayleigh about type II and type III tests
@@ -324,201 +362,161 @@ write.csv(mates.rep.plum.table, "output-files/TableS8_AIC table for mates in rep
 # Models for prop EP young in replacement clutch
 # Raw values of plumage used instead of scaled
 
+# 1) prop50
+propEP.prop50m <- glm(prop.ep ~ proportion.past.50,
+                            weights=clutch.size, 
+                            data=dat4, family="binomial")
 
-# 1) prop50m + female plumage
-propEP.prop50m.plumF <- glm(prop.ep ~ proportion.close.50 + B_avg.bright.female,
+
+# 2) prop50m + female plumage
+propEP.prop50m.plumF <- glm(prop.ep ~ proportion.past.50 + B_avg.bright.female,
                             weights=clutch.size, 
                             data=dat4, family="binomial")
 summary(propEP.prop50m.plumF)
-
-# 2) prop50m * female plumage
-propEP.prop50m.plumF.int <- glm(prop.ep ~ proportion.close.50 * B_avg.bright.female, 
-                                weights=clutch.size, 
-                                data=dat4, family="binomial")
-summary(propEP.prop50m.plumF.int)
 
 
 
 ########### Likelihood ratio test for prop EP in replacement ------------------
 
+### save table of results
 
-# 1) movement + female plumage
-Anova(propEP.prop50m.plumF)
-# Analysis of Deviance Table (Type II tests)
-# 
-# Response: prop.ep
-# LR Chisq Df Pr(>Chisq)   
-# proportion.close.50   7.3885  1   0.006564 **
-#   B_avg.bright.female   0.0520  1   0.819588  
-confint(propEP.prop50m.plumF)
-# 2.5 %    97.5 %
-#   (Intercept)          -4.7132233  5.391950
-# proportion.close.50 -20.6726602 -2.686729
-# B_avg.bright.female  -0.1688116  0.209322
-summary(propEP.prop50m.plumF)
-# glm(formula = prop.ep ~ proportion.close.50 + B_avg.bright.female, 
-#     family = "binomial", data = dat3, weights = clutch.size)
-# 
-# Deviance Residuals: 
-#   Min       1Q   Median       3Q      Max  
-# -2.3933  -0.9169   0.2791   1.1364   1.8819  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)  
-# (Intercept)           0.28681    2.51509   0.114   0.9092  
-# proportion.close.50 -10.45818    4.44307  -2.354   0.0186 *
-#   B_avg.bright.female   0.02149    0.09412   0.228   0.8194  
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# (Dispersion parameter for binomial family taken to be 1)
-# 
-# Null deviance: 27.223  on 9  degrees of freedom
-# Residual deviance: 19.833  on 7  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 35.451
-# 
-# Number of Fisher Scoring iterations: 5
+# get table of coefficients
+table.propEP.prop50m <- summary(propEP.prop50m)
+# Anova results
+anova.propEP.prop50m <- Anova(propEP.prop50m)
+anova.propEP.prop50m2 <- rbind(rep(NA, 3), anova.propEP.prop50m)
+# combine coefficients, and CIs, and Anova
+table2.propEP.prop50m <- cbind(table.propEP.prop50m$coefficients, 
+                               confint(propEP.prop50m), 
+                               anova.propEP.prop50m2)
+
+# get table of coefficients
+table.propEP.prop50m.plumF <- summary(propEP.prop50m.plumF)
+# anova result
+anova.propEP.prop50m.plumF <- Anova(propEP.prop50m.plumF)
+anova.propEP.prop50m.plumF2 <- rbind(rep(NA, 3), anova.propEP.prop50m.plumF)
+# combine coefficients, and CIs and anova
+table2.propEP.prop50m.plumF <- cbind(table.propEP.prop50m.plumF$coefficients, 
+                               confint(propEP.prop50m.plumF),
+                               anova.propEP.prop50m.plumF2)
+
+table2.propEP.all <- rbind(table2.propEP.prop50m, rep(NA,9),
+                           table2.propEP.prop50m.plumF)
+
+write.csv(table2.propEP.all, "output-files/mod results propEP both.csv")
+
+## To interpret the odds ratio in words, we can do the following: 
+# 1) Take beta and multiple by 0.1 (for 10 percentage points)
+# 2) Then exponentiate to get the odds ratio
+
+odds.ratio <- exp(10.46*0.1) # 2.846
+
+# lower CI
+exp(2.69*0.1) # 1.308655
+# upper CI
+exp(20.67*0.1) # 7.901084
 
 
-# 2) movement * female plumage
-Anova(propEP.prop50m.plumF.int, type="III")
-# Analysis of Deviance Table (Type III tests)
-# 
-# Response: prop.ep
-# LR Chisq Df Pr(>Chisq)  
-# proportion.close.50                       6.2929  1    0.01212 *
-#   B_avg.bright.female                       4.1567  1    0.04147 *
-#   proportion.close.50:B_avg.bright.female   5.3427  1    0.02081 *
-confint(propEP.prop50m.plumF.int)
-# 2.5 %       97.5 %
-#   (Intercept)                                1.3185340  35.82346847
-# proportion.close.50                     -329.7985183 -28.45501651
-# B_avg.bright.female                       -1.2951323  -0.01947026
-# proportion.close.50:B_avg.bright.female    0.6946215  11.59544225
-summary(propEP.prop50m.plumF.int)
-# glm(formula = prop.ep ~ proportion.close.50 * B_avg.bright.female, 
-#     family = "binomial", data = dat3, weights = clutch.size)
-# 
-# Deviance Residuals: 
-#   Min       1Q   Median       3Q      Max  
-# -2.2232  -0.9894   0.5108   0.8418   1.3241  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)  
-# (Intercept)                               15.9563     8.7111   1.832   0.0670 .
-# proportion.close.50                     -152.4635    75.9991  -2.006   0.0448 *
-#   B_avg.bright.female                       -0.5672     0.3216  -1.763   0.0778 .
-# proportion.close.50:B_avg.bright.female    5.2449     2.7404   1.914   0.0556 .
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# (Dispersion parameter for binomial family taken to be 1)
-# 
-# Null deviance: 27.223  on 9  degrees of freedom
-# Residual deviance: 14.490  on 6  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 32.109
-# 
-# Number of Fisher Scoring iterations: 5
 
+# Goodness of fit test----------------------------------------------------------
+
+# For binomial model, we use the Hosmer-Lemeshow goodness of fit test
+# https://thestatsgeek.com/2014/02/16/the-hosmer-lemeshow-goodness-of-fit-test-for-logistic-regression/
+
+library(ResourceSelection)
+
+# suggested that number of group for this test should be at least 1 larger than
+# the number of parameters in the model. 
+
+## close50 only
+
+# three groups
+h.3 <- hoslem.test(propEP.prop50m$y, fitted(propEP.prop50m), g=3)
+h.3
+# Hosmer and Lemeshow goodness of fit (GOF) test
+# 
+# data:  propEP.prop50m$y, fitted(propEP.prop50m)
+# X-squared = 0.57052, df = 1, p-value = 0.4501
+
+
+## close50.plumF
+
+# four groups
+h.4 <- hoslem.test(propEP.prop50m.plumF$y, 
+                   fitted(propEP.prop50m.plumF), g=4)
+h.4
+# Hosmer and Lemeshow goodness of fit (GOF) test
+# 
+# data:  propEP.prop50m.plumF$y, fitted(propEP.prop50m.plumF)
+# X-squared = 0.99548, df = 2, p-value = 0.6079
+
+# High p-vals in both cases indicates no evidence of poor model fit, although
+# the small sample size means the test has low power to detect misspecifications
 
 
 ################################################################################
 #-------------------------------------------------------------------------------
 # Models for number of EP young in replacement clutch
 
-# close 50 + female plumage
-numEP.rep.plumF.close50 <- glm(num.ep ~ B_avg.bright.female +
-                                 proportion.close.50, family="poisson",
+# close 50
+numEP.rep.close50 <- glm(num.ep ~ proportion.past.50, family="poisson",
                                data=dat4)
 
-# close 50 * female plumage
-numEP.rep.plumF.close50.int <- glm(num.ep ~ B_avg.bright.female *
-                                 proportion.close.50, family="poisson",
+# close 50 + female plumage
+numEP.rep.close50.plumF <- glm(num.ep ~ B_avg.bright.female +
+                                 proportion.past.50, family="poisson",
                                data=dat4)
+
 
 
 
 ### Likelihood ratio tests for number EP young --------------------------------
 
-# movement + female plumage
-Anova(numEP.rep.plumF.close50)
-# Analysis of Deviance Table (Type II tests)
-# 
-# Response: num.ep
-# LR Chisq Df Pr(>Chisq)  
-# B_avg.bright.female   0.2078  1    0.64849  
-# proportion.close.50   3.1863  1    0.07426 .
-confint(numEP.rep.plumF.close50)
-# 2.5 %    97.5 %
-#   (Intercept)          -3.2806612 3.5777293
-# B_avg.bright.female  -0.1013904 0.1642695
-# proportion.close.50 -12.8628397 0.4681680
-summary(numEP.rep.plumF.close50)
-# glm(formula = num.ep ~ B_avg.bright.female + proportion.close.50, 
-#     family = "poisson", data = dat4)
-# 
-# Deviance Residuals: 
-#   Min       1Q   Median       3Q      Max  
-# -2.0052  -0.9728  -0.0644   0.7819   1.3117  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)
-# (Intercept)          0.22513    1.73198   0.130    0.897
-# B_avg.bright.female  0.03045    0.06682   0.456    0.649
-# proportion.close.50 -5.32598    3.32567  -1.601    0.109
-# 
-# (Dispersion parameter for poisson family taken to be 1)
-# 
-# Null deviance: 15.250  on 9  degrees of freedom
-# Residual deviance: 12.064  on 7  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 37.533
-# 
-# Number of Fisher Scoring iterations: 6
+### save table of results
+
+# get table of coefficients
+table.numEP.rep.close50 <- summary(numEP.rep.close50)
+# Anova results
+anova.numEP.rep.close50 <- Anova(numEP.rep.close50)
+anova.numEP.rep.close502 <- rbind(rep(NA, 3), anova.numEP.rep.close50)
+# combine coefficients, and CIs, and Anova
+table2.numEP.rep.close50 <- cbind(table.numEP.rep.close50$coefficients, 
+                               confint(numEP.rep.close50), 
+                               anova.numEP.rep.close502)
+
+# get table of coefficients
+table.numEP.rep.close50.plumF <- summary(numEP.rep.close50.plumF)
+# anova result
+anova.numEP.rep.close50.plumF <- Anova(numEP.rep.close50.plumF)
+anova.numEP.rep.close50.plumF2 <- rbind(rep(NA, 3), anova.numEP.rep.close50.plumF)
+# combine coefficients, and CIs and anova
+table2.numEP.rep.close50.plumF <- cbind(
+  table.numEP.rep.close50.plumF$coefficients, 
+  confint(numEP.rep.close50.plumF),
+  anova.numEP.rep.close50.plumF2)
+
+table2.numEP.rep.all <- rbind(table2.numEP.rep.close50, rep(NA,9),
+                           table2.numEP.rep.close50.plumF)
+
+write.csv(table2.numEP.rep.all, "output-files/mod results numEP rep both.csv")
+
+# Goodness of fit---------------------------------------------------------------
+
+# For Poisson model, use deviance goodness of fit
+# https://thestatsgeek.com/2014/04/26/deviance-goodness-of-fit-test-for-poisson-regression/ 
+
+## numEP close50
+pchisq(numEP.rep.close50$deviance, df=numEP.rep.close50$df.residual, 
+       lower.tail=FALSE)
+# 0.139485, small p-val indicates that the model fit is bad. This p-val
+# suggests our model fit is okay but not great
 
 
-# movement * female plumage
-Anova(numEP.rep.plumF.close50.int)
-# Analysis of Deviance Table (Type II tests)
-# 
-# Response: num.ep
-# LR Chisq Df Pr(>Chisq)  
-# B_avg.bright.female                       0.2078  1    0.64849  
-# proportion.close.50                       3.1863  1    0.07426 .
-# B_avg.bright.female:proportion.close.50   0.1158  1    0.73364  
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-confint(numEP.rep.plumF.close50.int)
-# 2.5 %     97.5 %
-#   (Intercept)                              -5.5358456  7.3590313
-# B_avg.bright.female                      -0.2553697  0.2518696
-# proportion.close.50                     -70.9357660 42.9747556
-# B_avg.bright.female:proportion.close.50  -1.8445344  2.4704020
-summary(numEP.rep.plumF.close50.int)
-# glm(formula = num.ep ~ B_avg.bright.female * proportion.close.50, 
-#     family = "poisson", data = dat4)
-# 
-# Deviance Residuals: 
-#   Min       1Q   Median       3Q      Max  
-# -1.9491  -0.9510  -0.1581   0.8555   1.2176  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)
-# (Intercept)                               1.174039   3.255869   0.361    0.718
-# B_avg.bright.female                      -0.006966   0.128079  -0.054    0.957
-# proportion.close.50                     -15.068732  28.720210  -0.525    0.600
-# B_avg.bright.female:proportion.close.50   0.371260   1.085608   0.342    0.732
-# 
-# (Dispersion parameter for poisson family taken to be 1)
-# 
-# Null deviance: 15.250  on 9  degrees of freedom
-# Residual deviance: 11.948  on 6  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 39.417
-# 
-# Number of Fisher Scoring iterations: 6
+## numEP close50 plumF
+pchisq(numEP.rep.close50.plumF$deviance, 
+       df=numEP.rep.close50.plumF$df.residual, 
+       lower.tail=FALSE)
+# 0.09847568, this model fits slightly worse than the simpler model
 
 
 ################################################################################
@@ -527,264 +525,165 @@ summary(numEP.rep.plumF.close50.int)
 
 # Best movement variable from AICc is proportion.close.50
 
-# 1) close50 + female plumage
-mates.rep.cov.plumF.close50 <- glm(mates.replacement.ep ~ chicks.replacement +
-                                     B_avg.bright.female +
-                                     proportion.close.50, 
+# 1) close50
+mates.rep.cov.close50 <- glm(mates.replacement.ep ~ chicks.replacement +
+                                     proportion.past.50, 
                                    data=dat4, family="poisson")
 
-# 2) close50 * female plumage
-mates.rep.cov.plumF.close50.int <- glm(mates.replacement.ep ~ chicks.replacement +
-                                         B_avg.bright.female * proportion.close.50, 
-                                       data=dat4, family="poisson")
 
-
+# 2) close50 + female plumage
+mates.rep.cov.close50.plumF <- glm(mates.replacement.ep ~ chicks.replacement +
+                                     B_avg.bright.female +
+                                     proportion.past.50, 
+                                   data=dat4, family="poisson")
 
 
 ################### Likelihood ratio tests for number EP mates in replacement---
 
+### save table of results
 
-# 1) movement + female plumage
-Anova(mates.rep.cov.plumF.close50)
-# Analysis of Deviance Table (Type II tests)
-# 
-# Response: mates.replacement.ep
-# LR Chisq Df Pr(>Chisq)
-# chicks.replacement   0.10741  1     0.7431
-# B_avg.bright.female  0.09018  1     0.7640
-# proportion.close.50  1.10586  1     0.2930
-confint(mates.rep.cov.plumF.close50)
-# 2.5 %    97.5 %
-#   (Intercept)          -5.4813916 4.6938295
-# chicks.replacement   -0.7490114 0.5401911
-# B_avg.bright.female  -0.1606925 0.2162301
-# proportion.close.50 -15.8251888 3.5957166
-summary(mates.rep.cov.plumF.close50)
-# glm(formula = mates.replacement.ep ~ chicks.replacement + B_avg.bright.female + 
-#       proportion.close.50, family = "poisson", data = dat4)
-# 
-# Deviance Residuals: 
-#   Min        1Q    Median        3Q       Max  
-# -1.40717  -0.69851   0.00071   0.40443   0.86470  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)
-# (Intercept)         -0.04594    2.52415  -0.018    0.985
-# chicks.replacement  -0.10483    0.31960  -0.328    0.743
-# B_avg.bright.female  0.02787    0.09261   0.301    0.763
-# proportion.close.50 -4.61644    4.73662  -0.975    0.330
-# 
-# (Dispersion parameter for poisson family taken to be 1)
-# 
-# Null deviance: 7.4417  on 9  degrees of freedom
-# Residual deviance: 5.9080  on 6  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 29.135
-# 
-# Number of Fisher Scoring iterations: 5
+# get table of coefficients
+table.mates.rep.cov.close50 <- summary(mates.rep.cov.close50)
+# Anova results
+anova.mates.rep.cov.close50 <- Anova(mates.rep.cov.close50)
+anova.mates.rep.cov.close502 <- rbind(rep(NA, 3), anova.mates.rep.cov.close50)
+# combine coefficients, and CIs, and Anova
+table2.mates.rep.cov.close50 <- cbind(table.mates.rep.cov.close50$coefficients, 
+                                  confint(mates.rep.cov.close50), 
+                                  anova.mates.rep.cov.close502)
 
+# get table of coefficients
+table.mates.rep.cov.close50.plumF <- summary(mates.rep.cov.close50.plumF)
+# anova result
+anova.mates.rep.cov.close50.plumF <- Anova(mates.rep.cov.close50.plumF)
+anova.mates.rep.cov.close50.plumF2 <- rbind(rep(NA, 3), anova.mates.rep.cov.close50.plumF)
+# combine coefficients, and CIs and anova
+table2.mates.rep.cov.close50.plumF <- cbind(
+  table.mates.rep.cov.close50.plumF$coefficients, 
+  confint(mates.rep.cov.close50.plumF),
+  anova.mates.rep.cov.close50.plumF2)
 
-# 2) movement * female plumage
-Anova(mates.rep.cov.plumF.close50.int, type="III")
-# Analysis of Deviance Table (Type III tests)
-# 
-# Response: mates.replacement.ep
-# LR Chisq Df Pr(>Chisq)  
-# chicks.replacement                        2.5015  1    0.11374  
-# B_avg.bright.female                       3.3595  1    0.06682 .
-# proportion.close.50                       4.1426  1    0.04182 *
-#   B_avg.bright.female:proportion.close.50   3.9334  1    0.04734 *
-#   ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-confint(mates.rep.cov.plumF.close50.int)
-# 2.5 %      97.5 %
-#   (Intercept)                               -0.86597571 35.48321299
-# chicks.replacement                        -0.25242044  2.66429645
-# B_avg.bright.female                       -1.78607036  0.04462712
-# proportion.close.50                     -461.89904986 -6.34864949
-# B_avg.bright.female:proportion.close.50    0.07398172 16.94080603
-summary(mates.rep.cov.plumF.close50.int)
-# glm(formula = mates.replacement.ep ~ chicks.replacement + B_avg.bright.female * 
-#       proportion.close.50, family = "poisson", data = dat4)
-# 
-# Deviance Residuals: 
-#   1         2         3         4         5         6         7         8         9        10  
-# -0.02555  -0.21620  -0.14584   0.01191   0.44837   0.44604  -0.69392  -0.27251  -0.86167   0.45560  
-# 
-# Coefficients:
-#   Estimate Std. Error z value Pr(>|z|)  
-# (Intercept)                               14.5125     8.8819   1.634   0.1023  
-# chicks.replacement                         1.0762     0.7125   1.510   0.1309  
-# B_avg.bright.female                       -0.7202     0.4470  -1.611   0.1072  
-# proportion.close.50                     -195.2665   112.0351  -1.743   0.0814 .
-# B_avg.bright.female:proportion.close.50    7.0629     4.1353   1.708   0.0876 .
-# ---
-#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# (Dispersion parameter for poisson family taken to be 1)
-# 
-# Null deviance: 7.4417  on 9  degrees of freedom
-# Residual deviance: 1.9746  on 5  degrees of freedom
-# (1 observation deleted due to missingness)
-# AIC: 27.202
-# 
-# Number of Fisher Scoring iterations: 5
+table2.mates.rep.cov.all <- rbind(table2.mates.rep.cov.close50, rep(NA,9),
+                              table2.mates.rep.cov.close50.plumF)
 
+write.csv(table2.mates.rep.cov.all, "output-files/mod results mates rep both.csv")
 
+# Goodness of fit --------------------------------------------------------------
+
+## mates close50
+pchisq(mates.rep.cov.close50$deviance, 
+       df=mates.rep.cov.close50$df.residual, 
+       lower.tail=FALSE)
+# 0.5399633, higher p-val supports our null that the current model fit is good
+
+## mates close50 plumF
+pchisq(mates.rep.cov.close50.plumF$deviance, 
+       df=mates.rep.cov.close50.plumF$df.residual, 
+       lower.tail=FALSE)
+# 0.4335756, again here the model fit is pretty good
 
 ################################################################################
 #-------------------------------------------------------------------------------
 
+## Plot replacement prop EPO and replacement num EPO effects
 
+# Proportion EPO
 
-# Try getting predictions to plot myself
+# make new data to predict from
+pred.propEPO.y <- data.frame(
+  proportion.past.50=seq(0,1,0.001),
+  B_avg.bright.female=rep(mean(dat4$B_avg.bright.female), 1001))
 
-library(effects)
-?effect()
+# add predictions
+pred.propEPO.y$fit <- predict.glm(propEP.prop50m.plumF, 
+                        newdata=pred.propEPO.y[,1:2],
+                        type="response")
+# add the fitted values and SE on the scale of the model (not response)
+link <- predict.glm(propEP.prop50m.plumF, 
+              newdata=pred.propEPO.y[,1:2],
+              type="link", se.fit=T)
+pred.propEPO.y$fit_link <- link$fit
+pred.propEPO.y$se_link <- link$se.fit
+# get inverse-link function
+fam <- family(propEP.prop50m.plumF)
+ilink <- fam$linkinv
+# calculate CIs as back-transformed fit_link +/- 2*se_link
+pred.propEPO.y$upper <- ilink(pred.propEPO.y$fit_link + 
+                                2*pred.propEPO.y$se_link)
+pred.propEPO.y$lower <- ilink(pred.propEPO.y$fit_link - 
+                                2*pred.propEPO.y$se_link)
 
-# make table for predicted values
-pred_table <- effect(term="proportion.close.50:B_avg.bright.female", 
-                     mod=propEP.prop50m.plumF.int, x.var="proportion.close.50",
-                     xlevels=list(B_avg.bright.female=c(23, 26, 29, 30, 32),
-                                  proportion.close.50=seq(0,1,0.01))) %>% as_tibble 
-# fill in plumage values
-pred_table$plumage_label <- NA
-pred_table$plumage_label[which(pred_table$B_avg.bright.female==23)] <- "23"
-pred_table$plumage_label[which(pred_table$B_avg.bright.female==26)] <- "26"
-pred_table$plumage_label[which(pred_table$B_avg.bright.female==29)] <- "29"
-pred_table$plumage_label[which(pred_table$B_avg.bright.female==30)] <- "30"
-pred_table$plumage_label[which(pred_table$B_avg.bright.female==32)] <- "32"
-
-# plot
-ggplot(pred_table, aes(x=proportion.close.50, y=fit, 
-                       color=B_avg.bright.female,
-                       linetype=plumage_label)) +
-  geom_path(size=1.5) + xlim(0,0.3) + 
-  scale_color_continuous(low="#330000",high="tan")
-
-
-# Manuscript Figure S6
-# plot with raw data
+# plot fit line and confidence intervals
 ggplot() +
-  geom_path(data=pred_table, aes(x=proportion.close.50, y=fit, 
-                                 color=B_avg.bright.female,
-                                 linetype=plumage_label),
-            size=1.5) +
-  xlim(0,0.3) + 
-  scale_color_continuous(low="#330000",high="tan") +
-  geom_point(data=dat4, 
-             aes(x=proportion.close.50, y=prop.ep, 
-                 color=B_avg.bright.female, size=clutch.size),
-             alpha=0.8) +
-  scale_size(breaks = c(2,3,4,5),range = c(2,6)) +
-  ylab("Proportion EP offspring in replacement clutch") +
-  xlab("Proportion GPS points within 50m of barn") +
-  theme_light()
+  geom_line(data=pred.propEPO.y, 
+            aes(x=proportion.past.50, y=fit), size=2, 
+            color="darkblue") +
+  geom_ribbon(data=pred.propEPO.y, 
+              aes(ymin=lower, ymax=upper, 
+                  x=proportion.past.50), alpha=0.2, fill="darkblue") +
+  xlim(0.7,1) + ylim(0,1) +
+  geom_point(data=dat4, aes(x=proportion.past.50, y=prop.ep,
+                            size=clutch.size),alpha=0.5) +
+  xlab("Proportion of GPS points farther than 50m from the barn") +
+  ylab("Proportion of EP offspring in replacement clutch") +
+  ggtitle("The effect of movement on the proportion of\nEPO in the replacement clutch")
 
-ggsave("output-files/FigS6_female plumage interation plot values 23, 26, 29, 30, 32_v5.png", h=2.7, w=3.3, scale=1.9, units="in")
-ggsave("output-files/FigS6_female plumage interation plot values 23, 26, 29, 30, 32_v5.pdf", h=2.7, w=3.3, scale=1.9)
+# Figure 4a
+ggsave("output-files/effect of movement on prop EPO.png", h=4, w=5)
 
-# Manuscript Figure 2A
-# plot with just 3 plumage lines (23, 26, 29)
-pred_table_small <- subset(pred_table, pred_table$B_avg.bright.female==23 |
-                             pred_table$B_avg.bright.female==26 |
-                             pred_table$B_avg.bright.female==29)
+## plots using jtools
+library(jtools)
 
+effect_plot(propEP.prop50m.plumF, pred=proportion.past.50, interval=T) +
+  ylim(0,1)
+
+
+# Number of EPO ----------------------------------------------------------------
+
+# make new data to predict from
+pred.numEPO.y <- data.frame(
+  proportion.past.50=seq(0,1,0.001),
+  B_avg.bright.female=rep(mean(dat4$B_avg.bright.female), 1001))
+
+# add predictions
+pred.numEPO.y$fit <- predict.glm(numEP.rep.close50.plumF, 
+                                  newdata=pred.numEPO.y[,1:2],
+                                  type="response")
+# add the fitted values and SE on the scale of the model (not response)
+link.numEPO <- predict.glm(numEP.rep.close50.plumF, 
+                    newdata=pred.numEPO.y[,1:2],
+                    type="link", se.fit=T)
+pred.numEPO.y$fit_link <- link.numEPO$fit
+pred.numEPO.y$se_link <- link.numEPO$se.fit
+# get inverse-link function
+fam.numEPO <- family(numEP.rep.close50.plumF)
+ilink.numEPO <- fam.numEPO$linkinv
+# calculate CIs as back-transformed fit_link +/- 2*se_link
+pred.numEPO.y$upper <- ilink.numEPO(pred.numEPO.y$fit_link + 
+                                2*pred.numEPO.y$se_link)
+pred.numEPO.y$lower <- ilink.numEPO(pred.numEPO.y$fit_link - 
+                                2*pred.numEPO.y$se_link)
+
+# plot fit line and confidence intervals
 ggplot() +
-  geom_path(data=pred_table_small, aes(x=proportion.close.50, y=fit, 
-                                       color=B_avg.bright.female,
-                                       linetype=plumage_label),size=1.5) +
-  xlim(0,0.3) + 
-  scale_color_continuous(low="#330000",high="tan") +
-  geom_point(data=dat4, 
-             aes(x=proportion.close.50, y=prop.ep, 
-                 color=B_avg.bright.female, size=clutch.size),
-             alpha=0.8) +
-  scale_size(breaks = c(2,3,4,5),range = c(2,6)) +
-  ylab("Proportion EP offspring in replacement clutch") +
-  xlab("Proportion GPS points within 50m of barn") +
-  theme_light()
+  geom_line(data=pred.numEPO.y, 
+            aes(x=proportion.past.50, y=fit), 
+            size=2, color="darkblue", linetype="dashed") +
+  geom_ribbon(data=pred.numEPO.y, 
+              aes(ymin=lower, ymax=upper, 
+                  x=proportion.past.50), alpha=0.2, fill="darkblue") +
+  xlim(0.7,1) + ylim(0,6) +
+  geom_point(data=dat4, aes(x=proportion.past.50, y=num.ep), 
+             size=4, alpha=0.5) +
+  xlab("Proportion of GPS points farther than 50m from the barn") +
+  ylab("Number of EP offspring in replacement clutch") +
+  ggtitle("The effect of movement on the number of\nEPO in the replacement clutch")
 
-ggsave("output-files/Fig2A_female plumage interation plot values 23, 26, 29_v5.png", h=2.5, w=3.3, scale=1.9)
-ggsave("output-files/Fig2A_female plumage interation plot values 23, 26, 29_v5.pdf", h=2.5, w=3.3, scale=1.9)
-
+# Figure 4b  
+ggsave("output-files/effect of movement on num EPO.png", h=4, w=5)
 
 
-
-#-------------------------------------------------------------------------------
-# Plot of interaction effect, female plumage with close50 on number EP sires 
-# in replacement clutch
-
-# make table for predicted values
-pred_table_mates.rep <- effect(term="B_avg.bright.female:proportion.close.50", 
-                               mod=mates.rep.cov.plumF.close50.int, 
-                               x.var="proportion.close.50",
-                               xlevels=list(B_avg.bright.female=c(23, 26, 29, 30, 32),
-                                            proportion.close.50=seq(0,0.3,0.01))) %>% as_tibble 
-# fill in plumage values
-pred_table_mates.rep$plumage_label <- NA
-pred_table_mates.rep$plumage_label[which(pred_table_mates.rep$B_avg.bright.female==23)] <- "23"
-pred_table_mates.rep$plumage_label[which(pred_table_mates.rep$B_avg.bright.female==26)] <- "26"
-pred_table_mates.rep$plumage_label[which(pred_table_mates.rep$B_avg.bright.female==29)] <- "29"
-pred_table_mates.rep$plumage_label[which(pred_table_mates.rep$B_avg.bright.female==30)] <- "30"
-pred_table_mates.rep$plumage_label[which(pred_table_mates.rep$B_avg.bright.female==32)] <- "32"
-
-# plot with raw data
-# for some reason some of the fit values are WAY too high. Need to add ylim to plot
-ggplot() +
-  geom_path(data=pred_table_mates.rep, aes(x=proportion.close.50, y=fit, 
-                                           color=B_avg.bright.female,
-                                           linetype=plumage_label), size=1.5) +
-  xlim(0,0.3) + scale_color_continuous(low="#330000",high="tan") +
-  geom_point(data=dat4, 
-             aes(x=proportion.close.50, y=mates.replacement.ep, 
-                 color=B_avg.bright.female), size=3,
-             alpha=0.8) +
-  ylab("Number EP sires in replacement clutch") +
-  xlab("Proportion GPS points within 50m of barn") +
-  ggtitle("Model predictions for number of EP sires\nin the replacement clutch") +
-  theme_light() + ylim(0,15)  
+effect_plot(numEP.rep.close50.plumF, pred=proportion.past.50, interval=T)
 
 
-# Manuscript Figure S7
-# plot with ylim=3
-ggplot() +
-  geom_path(data=pred_table_mates.rep, aes(x=proportion.close.50, y=fit, 
-                                           color=B_avg.bright.female,
-                                           linetype=plumage_label), size=1.5) +
-  xlim(0,0.3) + scale_color_continuous(low="#330000",high="tan") +
-  geom_point(data=dat4, 
-             aes(x=proportion.close.50, y=mates.replacement.ep, 
-                 color=B_avg.bright.female), size=4,
-             alpha=0.8) +
-  ylab("Number EP sires in replacement clutch") +
-  xlab("Proportion GPS points within 50m of barn") +
-  theme_light() + ylim(0,3)
-
-ggsave("output-files/FigS7_female plumage interation plot num EP values 23, 26, 29, 30, 32_v5.png", h=2.5, w=3.3, scale=1.9)
-ggsave("output-files/FigS7_female plumage interation plot num EP values 23, 26, 29, 30, 32_v5.pdf", h=2.5, w=3.3, scale=1.9)
-
-
-# Figure 2B in main text
-# plot with just 3 plumage lines (23, 26, 29)
-pred_table_mates.rep_small <- subset(pred_table_mates.rep, 
-                             pred_table_mates.rep$B_avg.bright.female==23 |
-                             pred_table_mates.rep$B_avg.bright.female==26 |
-                             pred_table_mates.rep$B_avg.bright.female==29)
-
-ggplot() +
-  geom_path(data=pred_table_mates.rep_small, aes(x=proportion.close.50, y=fit, 
-                                           color=B_avg.bright.female,
-                                           linetype=plumage_label), size=1.5) +
-  xlim(0,0.3) + scale_color_continuous(low="#330000",high="tan") +
-  geom_point(data=dat4, 
-             aes(x=proportion.close.50, y=mates.replacement.ep, 
-                 color=B_avg.bright.female), size=4,
-             alpha=0.8) +
-  ylab("Number EP sires in replacement clutch") +
-  xlab("Proportion GPS points within 50m of barn") +
-  theme_light() + ylim(0,3)
-
-ggsave("output-files/Fig2B_female plumage interation plot num EP values 23, 26, 29_v5.png", h=2.5, w=3.3, scale=1.9)
-ggsave("output-files/Fig2B_female plumage interation plot num EP values 23, 26, 29_v5.pdf", h=2.5, w=3.3, scale=1.9)
 

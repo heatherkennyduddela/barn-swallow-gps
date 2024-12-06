@@ -323,7 +323,8 @@ dad.unk.sibs.site <- subset(dad.unk.sibs3, dad.unk.sibs2$Site_ind1 == dad.unk.si
 # k_0 also jumps from 0.8 to 0.964
 plot(dad.unk.sibs.site$k0_hat, dad.unk.sibs.site$pi_HAT)
 
-cooks.test <- subset(dad.unk.sibs.site, dad.unk.sibs.site$FamilyID_ind1 == "Cooks-23" |
+cooks.test <- subset(
+  dad.unk.sibs.site, dad.unk.sibs.site$FamilyID_ind1 == "Cooks-23" |
                        dad.unk.sibs.site$FamilyID_ind1 == "Cooks-31" |
                        dad.unk.sibs.site$FamilyID_ind2 == "Cooks-23" |
                        dad.unk.sibs.site$FamilyID_ind2== "Cooks-31")
@@ -363,7 +364,7 @@ for (i in 1:length(unk.fam.collect$FamilyID)) {
   # calculate row products
   row.prod <- apply(rel.r.bin, 1, prod, na.rm=T)
   
-  # sum up an add 1 to get the number of fathers
+  # sum up and add 1 to get the number of fathers
   num.dad <- sum(row.prod) + 1
   
   # save in storage
